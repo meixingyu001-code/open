@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>问题沙龙 · 梅梅宇宙</title>
+<style>
+  :root{
+    --serif:"Songti SC","Source Han Serif SC","Noto Serif SC","STSong",Georgia,serif;
+    --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --ink:#2c4430; --ink-soft:#557056; --faint:#8ba488;
+    --paper:#f4f8ef; --card:rgba(255,255,255,.7); --line:rgba(40,56,43,.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--serif);color:var(--ink);line-height:1.75;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(198,226,182,.5), transparent),
+      radial-gradient(900px 500px at 0% 100%, rgba(206,232,214,.45), transparent),
+      var(--paper);
+    min-height:100vh;padding:0 1.5rem 5rem;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+
+  .top{display:flex;justify-content:space-between;align-items:center;padding:1.6rem 0 3rem;font-family:var(--sans)}
+  .back{font-size:.8rem;letter-spacing:.12em;color:var(--ink-soft);text-decoration:none;
+        border:1px solid var(--line);border-radius:2rem;padding:.4em 1.1em;transition:.25s}
+  .back:hover{background:rgba(255,255,255,.6)}
+  .brand{font-size:.78rem;letter-spacing:.3em;color:var(--faint)}
+
+  h1{font-size:clamp(2rem,5vw,3rem);letter-spacing:.04em;line-height:1.25;margin-bottom:1rem}
+  .lead{font-size:clamp(1rem,2vw,1.15rem);color:var(--ink-soft);margin-bottom:1.4rem}
+  .belief{font-family:var(--sans);font-size:.86rem;letter-spacing:.06em;color:var(--faint);
+          border-left:2px solid var(--line);padding-left:1rem}
+
+  section{margin-top:4rem}
+  .kicker{font-family:var(--sans);font-size:.7rem;letter-spacing:.28em;color:var(--faint);margin-bottom:.9rem}
+  h2{font-size:1.5rem;letter-spacing:.03em;margin-bottom:1.5rem}
+
+  /* 循环 */
+  .loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:.9rem;padding:1.1rem 1.2rem}
+  .step .n{font-family:var(--sans);font-size:.7rem;letter-spacing:.2em;color:var(--faint)}
+  .step .t{font-size:1.1rem;margin:.3rem 0 .35rem}
+  .step .d{font-family:var(--sans);font-size:.83rem;color:var(--ink-soft);line-height:1.6}
+
+  /* 实录 */
+  .round{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:2rem 1.8rem}
+  .ask{font-size:1.2rem;line-height:1.7;padding-bottom:1.4rem;margin-bottom:1.4rem;border-bottom:1px solid var(--line)}
+  .ask span{display:block;font-size:.95rem;color:var(--ink-soft);margin-top:.5rem}
+  .line{margin:1.05rem 0;font-size:1.02rem;line-height:1.75}
+  .who{font-family:var(--sans);font-weight:700;font-size:.9rem;letter-spacing:.04em}
+  .cue{font-family:var(--sans);font-size:.76rem;color:var(--faint)}
+  .line.her{padding:1rem 1.1rem;background:rgba(255,255,255,.65);border-radius:.7rem;border:1px solid var(--line)}
+
+  .took{margin-top:1.6rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+  .took .row{display:flex;gap:1.1rem;margin:.8rem 0;align-items:baseline;flex-wrap:wrap}
+  .took .k{font-family:var(--sans);font-size:.72rem;letter-spacing:.16em;color:var(--faint);flex:0 0 5.5rem}
+  .took .v{flex:1 1 240px;font-size:1.05rem}
+  .loopback{font-family:var(--sans);font-size:.82rem;color:var(--faint);text-align:center;margin-top:1.6rem}
+
+  /* 卡点 */
+  .pains{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.9rem}
+  .pain{border:1px solid var(--line);border-radius:.8rem;padding:1rem 1.2rem;background:rgba(255,255,255,.5)}
+  .pain b{font-size:1.05rem}
+  .pain span{display:block;font-family:var(--sans);font-size:.8rem;color:var(--ink-soft);margin-top:.25rem}
+
+  .foot{margin-top:4.5rem;padding-top:2rem;border-top:1px solid var(--line);
+        font-family:var(--sans);font-size:.82rem;color:var(--faint);text-align:center;line-height:2}
+
+  @media (max-width:560px){ .took .k{flex:0 0 100%} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a class="back" href="index.html">← 回游园会</a>
+    <div class="brand">梅梅宇宙</div>
+  </div>
+
+  <h1>问题沙龙</h1>
+  <p class="lead">带一个真问题来,让尼采和波伏瓦替你吵一架。吵完,你带走一句自己的话和一个最小行动——下次,来验收。</p>
+  <p class="belief">每个人都有权用自己喜欢的方式度过这一生。</p>
+
+  <section>
+    <div class="kicker">A ROUND</div>
+    <h2>一桌是怎么走的</h2>
+    <div class="loop">
+      <div class="step"><div class="n">01</div><div class="t">问题来</div><div class="d">带一个真困惑,认真的那种。</div></div>
+      <div class="step"><div class="n">02</div><div class="t">吵一架</div><div class="d">几个针锋相对的头脑分头开火。</div></div>
+      <div class="step"><div class="n">03</div><div class="t">接招</div><div class="d">反对席强制反驳,专戳软处。</div></div>
+      <div class="step"><div class="n">04</div><div class="t">带走</div><div class="d">一句自己的话 + 一个最小行动。</div></div>
+      <div class="step"><div class="n">05</div><div class="t">还账</div><div class="d">下次回来,验收你做了没。</div></div>
+      <div class="step"><div class="n">06</div><div class="t">再开</div><div class="d">带着新问题,再开一桌。</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">A REAL ROUND · 现场实录</div>
+    <h2>一桌,真的发生过</h2>
+    <div class="round">
+      <div class="ask">「我不想被任何东西夺舍,想永远保住自己。
+        <span>可社会、"自由"、甚至我爱的东西,好像都在烧我。」</span></div>
+
+      <div class="line"><span class="who">尼采</span> ——「问反了。别问怎么才能不被占有——问,什么配占有你。」</div>
+      <div class="line"><span class="who">波伏瓦</span> ——「还有,'保住'就错了。主体性是个动词,你没法保住一个动词。」</div>
+      <div class="line"><span class="who">庄子</span> ——「你是火啊。烧得掉的,本来就不算你。你抓这么紧,手先累死。」</div>
+      <div class="line"><span class="who">尼采</span> <span class="cue">(冷笑)</span>「你累的,是站在火边那个监工。」</div>
+      <div class="line"><span class="who">韩炳哲</span> ——「那监工早搬进你身体里了,用你的声音,说关心你的话。它只问'值不值',从不问'暖不暖'。」</div>
+      <div class="line"><span class="who">福柯</span> <span class="cue">(慢慢地)</span>「那张验收单……到底是谁写的?」</div>
+      <div class="line her"><span class="who">她</span> <span class="cue">(突然坐直)</span>「一边烧、一边验收火——这不就是我每天在干的事?」</div>
+
+      <div class="took">
+        <p style="color:var(--ink-soft);font-size:.95rem;margin-bottom:1rem">终局,他们让她给那个监工<b>改了岗</b>——烧的时候只留报警器,验收挪到收工再做。</p>
+        <div class="row"><div class="k">带走的一句</div><div class="v">我该像水,攥自己攥得太紧了,该松一点。</div></div>
+        <div class="row"><div class="k">最小行动</div><div class="v">这周做事先别评判自己,把"值不值"留到收工再问。</div></div>
+      </div>
+      <div class="loopback">下次她回来,我们验收她做了没。 ↺</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">WHY</div>
+    <h2>四个卡点</h2>
+    <div class="pains">
+      <div class="pain"><b>信息过载</b><span>看得多,想不动</span></div>
+      <div class="pain"><b>决策瘫痪</b><span>都有理,选不出</span></div>
+      <div class="pain"><b>孤独思考</b><span>没人陪你吵</span></div>
+      <div class="pain"><b>没有闭环</b><span>想了就散了</span></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    你卡在什么上了?<br>
+    到目前为止,这些桌都是开给我自己的。
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Cloudflare 本地缓存(含账号信息,勿公开)
+worker/.wrangler/
+.wrangler/
+
+# 系统文件
+.DS_Store
+
+# 内部工作文档(后台材料,暂不公开)
+HANDOFF.md
+TALK_OUTLINE.md

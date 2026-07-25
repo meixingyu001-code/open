@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="梅梅宇宙 Life OS 内部演示：从校准过去，到可持续地活成我。">
+<title>梅梅宇宙 · Life OS 内部演示</title>
+<style>
+  :root{
+    --serif:"Songti SC","Source Han Serif SC","Noto Serif SC","STSong",Georgia,serif;
+    --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    --paper:#f5f7ee;--paper-rgb:245,247,238;--sheet:rgba(250,251,245,.84);--sheet-solid:#f8faf3;
+    --ink:#263c2b;--ink-soft:#566d59;--faint:#81947f;--moss:#3d6847;--moss-2:#6e9970;
+    --gold:#b9822d;--line:rgba(51,79,54,.15);--line-strong:rgba(51,79,54,.28);--shadow:rgba(30,55,34,.15);
+    color-scheme:light;
+  }
+  html[data-theme="night"]{
+    --paper:#071c18;--paper-rgb:7,28,24;--sheet:rgba(11,35,29,.85);--sheet-solid:#102b24;
+    --ink:#e5eedc;--ink-soft:#a9bca5;--faint:#7f9984;--moss:#b4d4a7;--moss-2:#7db18b;
+    --gold:#e0bd6c;--line:rgba(205,230,199,.14);--line-strong:rgba(205,230,199,.26);--shadow:rgba(0,0,0,.36);
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:78px}
+  body{margin:0;color:var(--ink);font-family:var(--serif);line-height:1.75;background:var(--paper);-webkit-font-smoothing:antialiased}
+  button,a,input{font:inherit}
+  button{color:inherit}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+  .skip{position:fixed;z-index:999;top:.7rem;left:.7rem;transform:translateY(-150%);padding:.55rem .85rem;border-radius:99px;background:var(--sheet-solid);text-decoration:none}
+  .skip:focus{transform:none}
+  .world{position:fixed;inset:0;z-index:-2;background-position:center;background-size:cover;transition:opacity .55s ease}
+  .world.day{background-image:linear-gradient(rgba(244,249,239,.26),rgba(226,239,209,.4)),url('assets/day-story.webp')}
+  .world.night{opacity:0;background-image:linear-gradient(rgba(3,16,13,.2),rgba(2,13,10,.38)),url('assets/night-story.webp')}
+  html[data-theme="night"] .world.day{opacity:0}
+  html[data-theme="night"] .world.night{opacity:1}
+  .veil{position:fixed;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(var(--paper-rgb),.36),rgba(var(--paper-rgb),.08) 45%,rgba(var(--paper-rgb),.24));pointer-events:none}
+  .topbar{position:sticky;z-index:80;top:0;display:flex;align-items:center;justify-content:space-between;gap:1rem;height:66px;padding:0 clamp(1rem,3vw,2.5rem);border-bottom:1px solid var(--line);background:rgba(var(--paper-rgb),.76);backdrop-filter:blur(18px)}
+  .brand{text-decoration:none;display:flex;align-items:baseline;gap:.7rem;min-width:0}
+  .brand strong{font-family:var(--sans);font-size:.84rem;letter-spacing:.26em;white-space:nowrap}
+  .brand span{color:var(--faint);font-family:var(--sans);font-size:.68rem;letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .controls{display:flex;align-items:center;gap:.5rem}
+  .control{border:1px solid var(--line-strong);border-radius:99px;background:var(--sheet);padding:.46rem .85rem;cursor:pointer;font-family:var(--sans);font-size:.73rem;letter-spacing:.07em;white-space:nowrap;backdrop-filter:blur(9px)}
+  .control:hover{border-color:var(--moss);background:var(--sheet-solid)}
+  .shell{display:grid;grid-template-columns:270px minmax(0,1fr);max-width:1440px;margin:auto}
+  .sidebar{position:sticky;top:66px;align-self:start;height:calc(100vh - 66px);overflow:auto;padding:2rem 1.35rem 4rem;border-right:1px solid var(--line);background:rgba(var(--paper-rgb),.46);backdrop-filter:blur(12px)}
+  .toc-label{margin:0 0 1.1rem;font-family:var(--sans);font-size:.65rem;letter-spacing:.28em;color:var(--faint)}
+  .toc-group{margin:1.2rem 0 .45rem;font-family:var(--sans);font-size:.67rem;letter-spacing:.12em;color:var(--moss)}
+  .toc a{position:relative;display:block;padding:.4rem .4rem .4rem 2.05rem;border-radius:8px;text-decoration:none;color:var(--ink-soft);font-size:.86rem;line-height:1.4}
+  .toc a span{position:absolute;left:.45rem;top:.46rem;color:var(--faint);font-family:var(--sans);font-size:.69rem}
+  .toc a:hover,.toc a[aria-current="true"]{color:var(--ink);background:rgba(var(--paper-rgb),.52)}
+  .toc a[aria-current="true"]::before{content:"";position:absolute;left:-1.35rem;top:.35rem;bottom:.35rem;width:2px;background:var(--gold)}
+  .arc-mini{margin-top:1.7rem;padding:1rem;border:1px solid var(--line);border-radius:14px;background:rgba(var(--paper-rgb),.35);font-family:var(--sans);font-size:.68rem;color:var(--faint)}
+  .arc-mini i{display:block;margin:.35rem 0;color:var(--moss);font-style:normal}
+  main{min-width:0;width:min(100%,980px);padding:0 clamp(1.2rem,5vw,4.5rem) 8rem}
+  .scene{position:relative;min-height:72vh;margin:2.2rem 0;padding:clamp(2rem,5vw,4rem);border:1px solid var(--line);border-radius:28px;background:var(--sheet);box-shadow:0 24px 70px var(--shadow);backdrop-filter:blur(22px);overflow:hidden}
+  .scene::after{content:"";position:absolute;z-index:0;width:260px;height:260px;right:-120px;bottom:-150px;border-radius:50%;background:radial-gradient(circle,rgba(153,191,116,.22),transparent 69%);pointer-events:none}
+  .scene>*{position:relative;z-index:1}
+  .cover{min-height:calc(100vh - 110px);display:flex;flex-direction:column;justify-content:center;background:linear-gradient(115deg,var(--sheet) 0%,rgba(var(--paper-rgb),.64) 58%,rgba(var(--paper-rgb),.2) 100%)}
+  .kicker{margin:0 0 1rem;font-family:var(--sans);font-size:.69rem;letter-spacing:.24em;color:var(--moss)}
+  .scene h1,.scene h2{margin:0;font-weight:500;line-height:1.26;letter-spacing:.01em;text-wrap:balance}
+  .scene h1{font-size:clamp(2.8rem,6.3vw,5.7rem);max-width:12ch}
+  .scene h2{font-size:clamp(2rem,4vw,3.5rem);max-width:17ch}
+  .scene h1 em,.scene h2 em{color:var(--moss);font-weight:inherit}
+  .hook{max-width:32rem;margin:1.7rem 0 0;font-size:clamp(1.06rem,1.7vw,1.3rem);color:var(--ink-soft);line-height:1.85}
+  .cover-actions{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem}
+  .primary,.ghost,.chip,.layer-btn,.flow-step,.mode-card{border:1px solid var(--line-strong);border-radius:99px;background:var(--sheet-solid);padding:.62rem 1rem;cursor:pointer;font-family:var(--sans);font-size:.76rem;letter-spacing:.06em;text-decoration:none}
+  .primary{color:var(--sheet-solid);background:var(--moss);border-color:var(--moss)}
+  html[data-theme="night"] .primary{color:#10251c}
+  .ghost:hover,.chip:hover,.layer-btn:hover,.flow-step:hover,.mode-card:hover{border-color:var(--moss)}
+  .speaker-seed{display:flex;gap:.55rem;align-items:flex-start;max-width:42rem;margin-top:1.8rem;padding:.8rem 1rem;border-left:2px solid var(--gold);color:var(--faint);font-family:var(--sans);font-size:.75rem;line-height:1.65}
+  .speaker-seed strong{color:var(--gold);white-space:nowrap;font-weight:500}
+  .lead{max-width:42rem;margin:1.25rem 0 0;color:var(--ink-soft);font-size:clamp(1.02rem,1.5vw,1.2rem)}
+  .body-copy{max-width:46rem;margin:1.35rem 0 0;color:var(--ink-soft)}
+  .big-question{margin-top:2rem;padding:1.3rem 1.5rem;border-left:3px solid var(--moss);background:rgba(117,151,101,.09);font-size:clamp(1.15rem,2vw,1.55rem)}
+  .act-mark{display:inline-flex;margin-bottom:1.1rem;padding:.25rem .65rem;border:1px solid var(--line-strong);border-radius:99px;color:var(--moss);font-family:var(--sans);font-size:.64rem;letter-spacing:.14em}
+  .arc{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:2.4rem}
+  .arc-card{position:relative;min-height:180px;padding:1.2rem;border:1px solid var(--line);border-radius:18px;background:rgba(var(--paper-rgb),.42)}
+  .arc-card:not(:last-child)::after{content:"→";position:absolute;z-index:2;right:-1rem;top:50%;color:var(--gold);font-family:var(--sans)}
+  .arc-card b{display:block;color:var(--moss);font-weight:500;font-size:1.05rem}
+  .arc-card span{display:block;margin-top:.55rem;color:var(--ink-soft);font-family:var(--sans);font-size:.76rem;line-height:1.65}
+  .note-card{margin-top:1.4rem;padding:1rem 1.15rem;border:1px dashed var(--line-strong);border-radius:14px;color:var(--faint);font-family:var(--sans);font-size:.75rem}
+  .layers{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(260px,1.2fr);gap:1.3rem;margin-top:2rem}
+  .layer-stack{display:flex;flex-direction:column-reverse;gap:.55rem}
+  .layer-btn{width:100%;text-align:left;border-radius:14px;padding:1rem 1.1rem;transition:.2s}
+  .layer-btn span{display:block;margin-top:.22rem;color:var(--faint);font-size:.67rem;letter-spacing:.03em}
+  .layer-btn[aria-selected="true"]{background:var(--moss);color:var(--sheet-solid);border-color:var(--moss);transform:translateX(8px)}
+  html[data-theme="night"] .layer-btn[aria-selected="true"]{color:#10251c}
+  .layer-btn[aria-selected="true"] span{color:inherit;opacity:.75}
+  .layer-panel{min-height:260px;padding:1.5rem;border:1px solid var(--line);border-radius:18px;background:rgba(var(--paper-rgb),.35)}
+  .layer-panel h3{margin:0 0 .7rem;font-weight:500;font-size:1.35rem}
+  .layer-panel p{margin:.5rem 0;color:var(--ink-soft)}
+  .layer-panel ul{padding-left:1.15rem;color:var(--ink-soft)}
+  .layer-panel li{margin:.35rem 0}
+  .source-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:2rem}
+  details{border:1px solid var(--line);border-radius:15px;background:rgba(var(--paper-rgb),.38)}
+  summary{padding:1rem;cursor:pointer;color:var(--ink);font-size:.96rem}
+  details p{margin:0;padding:0 1rem 1rem;color:var(--ink-soft);font-family:var(--sans);font-size:.76rem;line-height:1.7}
+  .principles{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-top:2rem}
+  .principle{padding:1.2rem;border-radius:16px;border:1px solid var(--line);background:rgba(var(--paper-rgb),.36)}
+  .principle b{display:block;color:var(--moss);font-size:1.05rem;font-weight:500}
+  .principle span{display:block;margin-top:.45rem;color:var(--ink-soft);font-family:var(--sans);font-size:.76rem;line-height:1.65}
+  .wiki-mock{display:grid;grid-template-columns:1.1fr .9fr;gap:1rem;margin-top:2rem}
+  .wiki-page,.pattern-view{padding:1.3rem;border:1px solid var(--line);border-radius:18px;background:rgba(var(--paper-rgb),.42)}
+  .mock-label{font-family:var(--sans);font-size:.64rem;letter-spacing:.15em;color:var(--faint)}
+  .redacted{height:.62rem;margin:.7rem 0;border-radius:99px;background:var(--line-strong)}
+  .redacted.short{width:62%}.redacted.tiny{width:36%}
+  .pattern-view{display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 50% 50%,rgba(126,168,112,.22),transparent 52%),rgba(var(--paper-rgb),.38)}
+  .pattern-view b{font-weight:500;color:var(--moss);font-size:1.25rem}
+  .pattern-view span{display:block;color:var(--faint);font-family:var(--sans);font-size:.72rem}
+  .wiki-live{margin-top:2rem;padding:1.15rem;border:1px solid var(--line);border-radius:20px;background:rgba(var(--paper-rgb),.4)}
+  .wiki-live-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.85rem}
+  .wiki-live-head b{font-weight:500;font-size:1.1rem}.wiki-live-head span{font-family:var(--sans);font-size:.65rem;letter-spacing:.12em;color:var(--moss)}
+  .wiki-atlas-demo{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem}
+  .wiki-door{min-height:112px;padding:.85rem;border:1px solid var(--line);border-radius:14px;background:rgba(var(--paper-rgb),.48)}
+  .wiki-door small{display:block;color:var(--faint);font-family:var(--sans);font-size:.62rem;letter-spacing:.1em}
+  .wiki-door b{display:block;margin-top:.25rem;font-weight:500;color:var(--moss)}
+  .wiki-door span{display:block;margin-top:.28rem;color:var(--ink-soft);font-family:var(--sans);font-size:.7rem;line-height:1.5}
+  .evidence-shot{margin:1.15rem 0 0;padding:.65rem;border:1px solid var(--line);border-radius:18px;background:rgba(var(--paper-rgb),.5);box-shadow:0 14px 40px var(--shadow)}
+  .evidence-shot img{display:block;width:100%;max-height:40vh;object-fit:contain;object-position:left center;border-radius:12px;background:#fff}
+  .evidence-shot figcaption{padding:.55rem .35rem .1rem;color:var(--faint);font-family:var(--sans);font-size:.68rem;line-height:1.5}
+  .tabs{margin-top:2rem}
+  .tablist{display:flex;flex-wrap:wrap;gap:.55rem}
+  .chip[aria-selected="true"]{color:var(--sheet-solid);background:var(--moss);border-color:var(--moss)}
+  html[data-theme="night"] .chip[aria-selected="true"]{color:#10251c}
+  .tab-panel{margin-top:.8rem;padding:1.35rem;border:1px solid var(--line);border-radius:18px;background:rgba(var(--paper-rgb),.4)}
+  .conversation{display:grid;gap:.65rem;max-width:42rem}
+  .bubble{width:fit-content;max-width:88%;padding:.8rem 1rem;border-radius:15px;background:rgba(115,151,101,.13);color:var(--ink-soft)}
+  .bubble.me{margin-left:auto;background:rgba(var(--paper-rgb),.62)}
+  .bubble.seed{border:1px dashed var(--gold);background:transparent;color:var(--faint)}
+  .bubble small{display:block;margin-bottom:.25rem;color:var(--faint);font-family:var(--sans)}
+  .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;margin-top:2rem}
+  .flow-step{position:relative;border-radius:15px;text-align:center;padding:.9rem .5rem}
+  .flow-step:not(:last-child)::after{content:"";position:absolute;width:.65rem;height:1px;right:-.62rem;top:50%;background:var(--gold)}
+  .flow-step[aria-pressed="true"]{background:var(--moss);color:var(--sheet-solid);border-color:var(--moss)}
+  html[data-theme="night"] .flow-step[aria-pressed="true"]{color:#10251c}
+  .flow-detail{min-height:90px;margin-top:.8rem;padding:1.1rem;border:1px solid var(--line);border-radius:15px;background:rgba(var(--paper-rgb),.38);color:var(--ink-soft)}
+  .sprouts{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem}
+  .sprout{padding:.85rem 1.05rem;border:1px solid var(--line);border-radius:50% 44% 48% 42%;background:rgba(133,170,109,.12)}
+  .sprout small{display:block;color:var(--faint);font-family:var(--sans)}
+  .deep-dive{margin-top:2rem}
+  .deep-dive details+details{margin-top:.7rem}
+  .deep-dive summary{font-size:1.05rem}
+  .inside{padding:0 1.2rem 1.2rem;color:var(--ink-soft)}
+  .skill-row{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}
+  .skill-row code{padding:.35rem .58rem;border:1px solid var(--line);border-radius:8px;font-family:var(--sans);font-size:.72rem;color:var(--moss)}
+  .collab-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-top:2rem}
+  .collab-card{padding:1.05rem 1.15rem;border:1px solid var(--line);border-radius:16px;background:rgba(var(--paper-rgb),.4)}
+  .collab-card b{display:block;color:var(--moss);font-weight:500;font-size:1.02rem}
+  .collab-card p{margin:.35rem 0 0;color:var(--ink-soft);font-family:var(--sans);font-size:.75rem;line-height:1.65}
+  .skill-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-top:1.5rem}
+  .skill-stat{padding:.9rem 1rem;border:1px solid var(--line);border-radius:14px;background:rgba(var(--paper-rgb),.38)}
+  .skill-stat strong{display:block;color:var(--moss);font-size:1.55rem;font-weight:500;line-height:1.2}
+  .skill-stat span{display:block;margin-top:.25rem;color:var(--faint);font-family:var(--sans);font-size:.68rem;line-height:1.45}
+  .skill-system{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;margin-top:.8rem}
+  .skill-card{padding:.85rem .75rem;border:1px solid var(--line);border-radius:14px;background:rgba(var(--paper-rgb),.43)}
+  .skill-card code{display:block;color:var(--moss);font-family:var(--sans);font-size:.7rem;font-weight:600}
+  .skill-card b{display:block;margin:.28rem 0;font-weight:500;font-size:.92rem}
+  .skill-card span{display:block;color:var(--ink-soft);font-family:var(--sans);font-size:.66rem;line-height:1.5}
+  .skill-truth{margin-top:.75rem;padding:.8rem 1rem;border-left:2px solid var(--gold);background:rgba(185,130,45,.07);color:var(--ink-soft);font-family:var(--sans);font-size:.72rem;line-height:1.6}
+  .candidate-board{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-top:1.35rem}
+  .candidate-group{padding:.9rem 1rem;border:1px solid var(--line);border-radius:15px;background:rgba(var(--paper-rgb),.42)}
+  .candidate-group h3{margin:0 0 .55rem;color:var(--moss);font-size:.92rem;font-weight:500}
+  .candidate-group code{display:block;margin:.22rem 0;color:var(--ink-soft);font-family:var(--sans);font-size:.64rem;line-height:1.35;overflow-wrap:anywhere}
+  .maturity-strip{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}
+  .maturity-strip span{padding:.38rem .65rem;border:1px solid var(--line);border-radius:99px;color:var(--faint);font-family:var(--sans);font-size:.65rem}
+  .maturity-strip b{color:var(--moss);font-weight:500}
+  .compare{margin-top:2rem}
+  .compare-stage{position:relative;min-height:260px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(var(--paper-rgb),.34)}
+  .compare-pane{position:absolute;inset:0;padding:1.35rem;overflow:hidden}
+  .compare-pane.after{clip-path:inset(0 50% 0 0);background:rgba(125,164,108,.12);border-right:2px solid var(--gold)}
+  .raw-line{margin:.42rem 0;color:var(--faint);font-family:monospace;font-size:.72rem;white-space:nowrap}
+  .clean-card{max-width:480px;margin:.5rem 0;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--sheet-solid)}
+  .clean-card b{font-weight:500}.clean-card p{margin:.4rem 0 0;color:var(--ink-soft);font-size:.88rem}
+  .compare input{width:100%;margin-top:1rem;accent-color:var(--moss)}
+  .compare-labels{display:flex;justify-content:space-between;color:var(--faint);font-family:var(--sans);font-size:.7rem}
+  .projection{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;margin-top:2rem}
+  .projection-card{min-height:205px;padding:1.3rem;border:1px solid var(--line);border-radius:18px;background:rgba(var(--paper-rgb),.4)}
+  .projection-card h3{margin:0;font-weight:500}.projection-card ul{padding-left:1.1rem;color:var(--ink-soft)}
+  .projection-arrow{color:var(--gold);font-family:var(--sans);font-size:1.4rem}
+  .privacy-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;margin-top:1.7rem}
+  .privacy-step{position:relative;min-height:150px;padding:.95rem .8rem;border:1px solid var(--line);border-radius:15px;background:rgba(var(--paper-rgb),.42)}
+  .privacy-step:not(:last-child)::after{content:"→";position:absolute;z-index:2;right:-.82rem;top:44%;color:var(--gold);font-family:var(--sans)}
+  .privacy-step small{display:block;color:var(--faint);font-family:var(--sans);font-size:.62rem;letter-spacing:.1em}
+  .privacy-step b{display:block;margin-top:.2rem;color:var(--moss);font-weight:500}
+  .privacy-step span{display:block;margin-top:.35rem;color:var(--ink-soft);font-family:var(--sans);font-size:.67rem;line-height:1.52}
+  .privacy-source{margin-top:.8rem;padding:.75rem 1rem;border:1px dashed var(--line-strong);border-radius:12px;color:var(--faint);font-family:var(--sans);font-size:.68rem;line-height:1.55}
+  .universe-link{display:inline-flex;align-items:center;gap:.65rem;margin-top:1.5rem;padding:.75rem 1.1rem;border-radius:99px;background:var(--moss);color:var(--sheet-solid);text-decoration:none;font-family:var(--sans);font-size:.78rem;letter-spacing:.06em}
+  html[data-theme="night"] .universe-link{color:#10251c}
+  .connection-loop{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;margin-top:2rem}
+  .connection-step{position:relative;min-height:120px;padding:1rem .75rem;border:1px solid var(--line);border-radius:16px;background:rgba(var(--paper-rgb),.42)}
+  .connection-step:not(:last-child)::after{content:"→";position:absolute;z-index:2;right:-.82rem;top:42%;color:var(--gold);font-family:var(--sans)}
+  .connection-step b{display:block;font-weight:500;color:var(--moss)}
+  .connection-step span{display:block;margin-top:.35rem;color:var(--ink-soft);font-family:var(--sans);font-size:.7rem;line-height:1.55}
+  .connection-return{margin-top:.8rem;padding:.75rem 1rem;border:1px dashed var(--gold);border-radius:12px;color:var(--ink-soft);font-family:var(--sans);font-size:.73rem;text-align:center}
+  .console{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-top:2rem}
+  .mode-card{border-radius:17px;text-align:left;min-height:145px;padding:1.1rem}
+  .mode-card b{display:block;font-family:var(--serif);font-size:1.15rem;font-weight:500}
+  .mode-card span{display:block;margin-top:.45rem;color:var(--faint);font-family:var(--sans);font-size:.72rem;line-height:1.55}
+  .mode-card[aria-pressed="true"]{border-color:var(--moss);background:rgba(119,159,102,.17)}
+  .spine{margin-top:1rem;padding:.9rem 1rem;border-radius:12px;background:var(--moss);color:var(--sheet-solid);text-align:center;font-family:var(--sans);font-size:.78rem;letter-spacing:.12em}
+  html[data-theme="night"] .spine{color:#10251c}
+  .final{min-height:calc(100vh - 110px);display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+  .final h2{max-width:15ch;font-size:clamp(2.5rem,5.6vw,5rem)}
+  .final .universe-link{margin-top:2rem}
+  .present-ui{display:none}
+  body.presenting{overflow:hidden}
+  body.presenting .topbar,body.presenting .sidebar{display:none}
+  body.presenting .shell{display:block;max-width:none}
+  body.presenting main{width:100%;max-width:none;padding:0}
+  body.presenting .scene{display:none}
+  body.presenting .scene.active{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;min-height:0;margin:0;padding:6vh 8vw 11vh;border:0;border-radius:0;background:rgba(var(--paper-rgb),.82);box-shadow:none;overflow:auto;backdrop-filter:blur(19px)}
+  body.presenting .scene.active.cover,body.presenting .scene.active.final{align-items:flex-start}
+  body.presenting .scene h2{font-size:clamp(2.2rem,4.2vw,4.1rem)}
+  body.presenting .scene .lead{font-size:clamp(1.05rem,1.45vw,1.3rem)}
+  body.presenting .present-ui{position:fixed;z-index:120;left:0;right:0;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:1rem 2vw;background:linear-gradient(transparent,rgba(var(--paper-rgb),.84))}
+  .present-ui .nav-buttons{display:flex;justify-self:center;align-items:center;gap:.55rem}
+  .present-ui button{border:1px solid var(--line-strong);border-radius:99px;background:var(--sheet);padding:.45rem .75rem;cursor:pointer;font-family:var(--sans);font-size:.72rem}
+  .present-ui .count{justify-self:end;font-family:var(--sans);font-size:.72rem;color:var(--faint)}
+  .present-ui .exit-present{justify-self:start}
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr}.sidebar{display:none}main{margin:auto}.scene{min-height:auto}
+    .arc,.console{grid-template-columns:repeat(2,1fr)}.arc-card:nth-child(2)::after{display:none}
+    .layers,.wiki-mock{grid-template-columns:1fr}.source-grid,.principles,.wiki-atlas-demo{grid-template-columns:repeat(2,1fr)}
+    .skill-system,.privacy-flow,.candidate-board{grid-template-columns:repeat(3,1fr)}.privacy-step:nth-child(3)::after{display:none}
+    .connection-loop{grid-template-columns:repeat(3,1fr)}.connection-step:nth-child(3)::after{display:none}
+  }
+  @media (max-width:600px){
+    .brand span,.control .wide{display:none}.topbar{height:60px}.controls{gap:.3rem}.control{padding:.42rem .65rem}
+    main{padding:0 .8rem 4rem}.scene{margin:1rem 0;padding:1.5rem;border-radius:20px}.cover{min-height:calc(100vh - 80px)}
+    .arc,.console,.source-grid,.principles,.wiki-atlas-demo,.connection-loop,.collab-grid,.skill-stats,.skill-system,.privacy-flow,.candidate-board{grid-template-columns:1fr}.arc-card:not(:last-child)::after{content:"↓";right:50%;top:auto;bottom:-1.15rem}
+    .privacy-step:not(:last-child)::after{display:block;content:"↓";right:50%;top:auto;bottom:-.9rem}
+    .connection-step:not(:last-child)::after{display:block;content:"↓";right:50%;top:auto;bottom:-.9rem}
+    .flow{grid-template-columns:1fr}.flow-step:not(:last-child)::after{width:1px;height:.65rem;right:50%;top:auto;bottom:-.65rem}
+    .projection{grid-template-columns:1fr}.projection-arrow{transform:rotate(90deg);justify-self:center}
+    body.presenting .scene.active{padding:5vh 6vw 13vh}.present-ui{padding:.7rem}.present-ui .count{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<a class="skip" href="#deck">跳到正文</a>
+<div class="world day" aria-hidden="true"></div><div class="world night" aria-hidden="true"></div><div class="veil" aria-hidden="true"></div>
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="返回梅梅宇宙"><strong>梅梅宇宙</strong><span>Life OS · 内部演示 1.0</span></a>
+  <div class="controls">
+    <button class="control" id="themeToggle" type="button" aria-pressed="false"><span aria-hidden="true">◐</span> <span class="wide">夜间</span></button>
+    <button class="control" id="presentToggle" type="button"><span aria-hidden="true">▣</span> <span class="wide">演示态</span></button>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="sidebar" aria-label="演示目录">
+    <p class="toc-label">阅读路径</p>
+    <nav class="toc" id="toc">
+      <p class="toc-group">ACT 0 · 起点</p>
+      <a href="#cover"><span>00</span>从当前的我出发</a>
+      <p class="toc-group">ACT 1 · 为什么</p>
+      <a href="#why"><span>01</span>拿回叙事权</a><a href="#arc"><span>02</span>一条目的链</a>
+      <p class="toc-group">ACT 2 · 怎么搭</p>
+      <a href="#layers"><span>03</span>三层底座</a><a href="#sources"><span>04</span>回收真实记录</a><a href="#brain"><span>05</span>第二大脑</a><a href="#wiki"><span>06</span>照见 · 叙事权</a>
+      <p class="toc-group">ACT 3 · 怎么用</p>
+      <a href="#learning"><span>07</span>AI Native 学习</a><a href="#twin"><span>08</span>数字分身</a><a href="#flow"><span>09</span>自运转</a><a href="#sprouts"><span>10</span>长出来的功能</a>
+      <p class="toc-group">ACT 4 · 怎么做到</p>
+      <a href="#engineering"><span>11</span>AI 怎么接得住</a><a href="#skills"><span>12</span>Skills 怎么接力</a><a href="#skill-pool"><span>13</span>27 个名字</a><a href="#cleaning"><span>14</span>清洗前后</a>
+      <p class="toc-group">ACT 5 · 给别人</p>
+      <a href="#projection"><span>15</span>private → open</a><a href="#universe"><span>16</span>产品脸</a><a href="#connection"><span>17</span>连接与回流</a>
+      <p class="toc-group">ACT 6 · 回到人</p>
+      <a href="#console"><span>18</span>每日控制台</a><a href="#final"><span>19</span>可持续地活成我</a>
+    </nav>
+    <div class="arc-mini">校准过去<i>↓</i>更聪明的现在<i>↓</i>反脆弱的未来<i>↓</i>可持续地活成我</div>
+  </aside>
+
+  <main id="deck">
+    <section class="scene cover" id="cover" data-title="从当前的我出发">
+      <p class="kicker">梅梅宇宙 · LIFE OS · 内部演示</p>
+      <h1>从当前的我，<br>到<em>可持续地</em><br>活成我。</h1>
+      <p class="hook">我怕的不是忘记自己。是没有把时间花在真正想过的生活上；没有努力往那个方向走。</p>
+      <div class="cover-actions"><button class="primary" type="button" data-enter-present>进入演示态</button><a class="ghost" href="#why">继续阅读</a></div>
+      <div class="speaker-seed"><strong>讲述种子</strong><span>这里由梅梅补：那个让你意识到「我不能只靠意志力活成我」的具体瞬间。</span></div>
+    </section>
+
+    <section class="scene" id="why" data-title="拿回叙事权">
+      <span class="act-mark">ACT 1 · 为什么</span><p class="kicker">焦虑驱动 → 创造力 / 好奇心驱动</p>
+      <h2>AI 越懂你，<br>你越要拿回<em>真实的你</em>。</h2>
+      <p class="lead">记忆会改写，平台会消失，Agent 会把推断混进你的自我印象。本地 Markdown 留下可追溯的证据，让「我此刻在哪」重新由我来讲。</p>
+      <div class="big-question">知识即权力。叙事，也是一种 power。<br><small>女性主义 × 自我技术 × 数据主权</small></div>
+      <div class="note-card">同频坐标：Daniel Miessler 的「当前状态 → 理想状态」。这里是平行发现与互相照亮，不是来源关系。</div>
+      <div class="speaker-seed"><strong>文案种子</strong><span>「Human 3.0」与「自我技术」之间的那句话，等梅梅现场长出来。</span></div>
+    </section>
+
+    <section class="scene" id="arc" data-title="一条目的链">
+      <span class="act-mark">ACT 1 · 叙事弧</span><p class="kicker">这套系统为什么存在</p>
+      <h2>不是保存一切，<br>是让人生<em>有方向地流动</em>。</h2>
+      <div class="arc" aria-label="Life OS 目的链">
+        <div class="arc-card"><b>校准过去</b><span>回到真实记录，分开事实、原话、推断与后来解释。</span></div>
+        <div class="arc-card"><b>更聪明的现在</b><span>让学习、碰撞与召回进入正在发生的选择。</span></div>
+        <div class="arc-card"><b>反脆弱的未来</b><span>不预测所有变化，而是让系统持续吸收变化。</span></div>
+        <div class="arc-card"><b>可持续地活成我</b><span>从一次用力，变成一种能长期维持的生活方式。</span></div>
+      </div>
+      <div class="note-card">这不是一条封闭直线：公开表达与真实连接会把新的坐标带回来，进入下一轮校准。</div>
+    </section>
+
+    <section class="scene" id="layers" data-title="三层底座">
+      <span class="act-mark">ACT 2 · 怎么搭</span><p class="kicker">先决定每一层装什么</p>
+      <h2>原料、活脑、结晶，<br><em>不能混在一起</em>。</h2>
+      <p class="lead">点击三层，看它们各自的职责与健康指标。</p>
+      <div class="layers">
+        <div class="layer-stack" role="tablist" aria-label="三层信息架构">
+          <button class="layer-btn" type="button" role="tab" aria-selected="true" aria-controls="layerPanel" data-layer="archive">冷库<span>沉积层 · 以全为美</span></button>
+          <button class="layer-btn" type="button" role="tab" aria-selected="false" aria-controls="layerPanel" data-layer="brain">第二大脑 / Obsidian<span>代谢层 · 以小而活跃为美</span></button>
+          <button class="layer-btn" type="button" role="tab" aria-selected="false" aria-controls="layerPanel" data-layer="wiki">Wiki<span>结晶层 · 以精为美</span></button>
+        </div>
+        <div class="layer-panel" id="layerPanel" role="tabpanel" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="scene" id="sources" data-title="回收真实记录">
+      <span class="act-mark">ACT 2 · 数据主权</span><p class="kicker">多源导出实战</p>
+      <h2>先把散落在平台里的我，<br><em>带回本地</em>。</h2>
+      <p class="lead">点开每个来源，看方法。这里只展示流程，不展示数量、文件名或私人内容。</p>
+      <div class="source-grid">
+        <details><summary>播客</summary><p>RSS 拉取音频 → 本地转录 → 声纹区分 → 标准 Markdown；公开节目与私密素材分开处理。</p></details>
+        <details><summary>公众号</summary><p>文章链接清单 → 批量抓取 → 保留发布日期与原链接 → 建立增量更新记录。</p></details>
+        <details><summary>微信</summary><p>由本人决定导出范围；核心隐私只留本地，不进公开仓，不由 AI 替人筛选。</p></details>
+        <details><summary>飞书 / Notion</summary><p>原结构镜像进入冷库；进入活脑时重新按功能与主题组织，不照搬旧文件夹。</p></details>
+        <details><summary>AI 聊天</summary><p>先去污染：区分「我说过」「AI 推断」「尚未认领」，不能把生成内容倒灌成自我证据。</p></details>
+        <details><summary>持续增量</summary><p>第一轮不是终点；之后按真实使用频率补增量，并留下失败清单与变更记录。</p></details>
+      </div>
+    </section>
+
+    <section class="scene" id="brain" data-title="第二大脑">
+      <span class="act-mark">ACT 2 · 不打标的第二大脑</span><p class="kicker">输入可以随手，结构交给系统</p>
+      <h2>不是把大脑整理得更满，<br>而是学会<em>流转与删除</em>。</h2>
+      <div class="principles">
+        <div class="principle"><b>无痛入口</b><span>全扔进最习惯的入口；人负责表达，AI 辅助识别与路由。</span></div>
+        <div class="principle"><b>主题 MOC</b><span>主题可以交叉，双链负责关联，不用一套僵硬标签把自己锁死。</span></div>
+        <div class="principle"><b>三种结局</b><span>结晶进 Wiki、沉降进归档、失去价值就消亡。活脑要保持呼吸。</span></div>
+      </div>
+      <div class="speaker-seed"><strong>讲述种子</strong><span>补一个「我只丢了一句话，后来它在正确场景重新出现」的脱敏例子。</span></div>
+    </section>
+
+    <section class="scene" id="wiki" data-title="照见 · 叙事权">
+      <span class="act-mark">ACT 2 · 工作名待定</span><p class="kicker">照见 · 叙事权</p>
+      <h2>Wiki 只放被验证的，<br>让模式<em>慢慢显影</em>。</h2>
+      <p class="lead">主题互不重叠，视图可以交叉。它照见反复出现的模式、恐惧与草灰蛇线，用证据校准过去，而不是给人生盖章。</p>
+      <div class="wiki-live" aria-label="已经上线的公开 Wiki 结构">
+        <div class="wiki-live-head"><b>公开 Wiki 已经长出来</b><span>PUBLIC · 2026.07</span></div>
+        <div class="wiki-atlas-demo">
+          <div class="wiki-door"><small>CHRONOLOGY</small><b>编年史</b><span>2023–2026：年份、生活切片与当时的声音。</span></div>
+          <div class="wiki-door"><small>FIELD</small><b>场域</b><span>旅行不是打卡，是理解自己如何生活的取样。</span></div>
+          <div class="wiki-door"><small>QUESTIONS</small><b>命题</b><span>答案不是结论，而是从年份与行动里长出来。</span></div>
+          <div class="wiki-door"><small>TENSIONS</small><b>模式与张力</b><span>产品化 ↔ 不变成内容机器；两极都不被抹平。</span></div>
+          <div class="wiki-door"><small>EMOTION</small><b>情绪地图</b><span>不公开原话，只呈现状态、边界与行动路径。</span></div>
+          <div class="wiki-door"><small>WORKS</small><b>作品与表达</b><span>看哪些东西被做成可以被听见、使用和带走的作品。</span></div>
+        </div>
+      </div>
+      <div class="speaker-seed"><strong>公开边界</strong><span>关系、健康、财务与私密原话不出门；公开页只留下已认领的思考骨架与安全场景。</span></div>
+    </section>
+
+    <section class="scene" id="learning" data-title="AI Native 学习">
+      <span class="act-mark">ACT 3 · 更聪明的现在</span><p class="kicker">带着真问题进入会客厅</p>
+      <h2>先碰撞，<br>再去读<em>真正的书</em>。</h2>
+      <p class="lead">AI 不是替你总结答案。它先搭反对席、召集不同领域的方法，让你在分歧里把问题问深，再把你带回原典与真实资料。</p>
+      <div class="tabs">
+        <div class="tablist" role="tablist" aria-label="学习路径">
+          <button class="chip" type="button" role="tab" aria-selected="true" data-tab="question">真问题</button><button class="chip" type="button" role="tab" aria-selected="false" data-tab="debate">反对席</button><button class="chip" type="button" role="tab" aria-selected="false" data-tab="sources">回到原典</button>
+        </div>
+        <div class="tab-panel" id="learningPanel" role="tabpanel" aria-live="polite"></div>
+      </div>
+      <figure class="evidence-shot"><img src="assets/talk-roundtable.png" alt="思想圆桌围绕年轻人、上班与自由展开讨论的脱敏片段"><figcaption>真实圆桌片段 · 每人一次只说一小段，可以随时打断、点名、追问。</figcaption></figure>
+    </section>
+
+    <section class="scene" id="twin" data-title="数字分身">
+      <span class="act-mark">ACT 3 · 数字分身</span><p class="kicker">不是模仿口吻，是让经验可以回来</p>
+      <h2>把给别人的温柔，<br><em>也给自己</em>。</h2>
+      <figure class="evidence-shot"><img src="assets/talk-digital-twin.jpg" alt="数字分身回答最喜欢谁的真实脱敏对话"><figcaption>真实对话片段 · 它没有模仿一句口头禅，而是认出了「把自己当自己」这条价值线。</figcaption></figure>
+      <p class="lead">它从人格卡、原话样本、黄金测试集与纠错记录里自然涌现；目标不是「像」，而是稳稳守住边界、记得来路。</p>
+    </section>
+
+    <section class="scene" id="flow" data-title="自运转">
+      <span class="act-mark">ACT 3 · 反脆弱的引擎</span><p class="kicker">让材料进入正确下一站</p>
+      <h2>自运转，不是自动塞满。<br>是让重要的东西<em>再出现</em>。</h2>
+      <div class="flow" aria-label="自运转数据流">
+        <button class="flow-step" type="button" aria-pressed="true" data-flow="capture">捕获</button><button class="flow-step" type="button" aria-pressed="false" data-flow="recognize">识别</button><button class="flow-step" type="button" aria-pressed="false" data-flow="connect">关联</button><button class="flow-step" type="button" aria-pressed="false" data-flow="recall">召回</button><button class="flow-step" type="button" aria-pressed="false" data-flow="output">输出 / 删除</button>
+      </div>
+      <div class="flow-detail" id="flowDetail" aria-live="polite"></div>
+    </section>
+
+    <section class="scene" id="sprouts" data-title="长出来的功能">
+      <span class="act-mark">ACT 3 · 从真实焦虑长功能</span><p class="kicker">第二大脑存在的意义，是解放第一大脑</p>
+      <h2>焦虑什么，<br>就让系统<em>长出什么</em>。</h2>
+      <div class="sprouts"><div class="sprout">健康助理<small>不展示任何健康数据</small></div><div class="sprout">无痛记账<small>不展示任何财务数字</small></div><div class="sprout">抓乌龟<small>命名与定义待梅梅</small></div><div class="sprout">创作输出<small>让旧材料重新供能</small></div></div>
+      <div class="speaker-seed"><strong>讲述种子</strong><span>这些不是路线图承诺，是系统从真实生活里长出来的枝芽。</span></div>
+    </section>
+
+    <section class="scene" id="engineering" data-title="AI 怎么接得住长期项目">
+      <span class="act-mark">ACT 4 · 怎么做到的</span><p class="kicker">AI 可以换，工作不能每次失忆</p>
+      <h2>我不是训练一个永远在线的 AI，<br>而是给每个 AI 一张<em>接手地图</em>。</h2>
+      <div class="collab-grid">
+        <div class="collab-card"><b>先读现在发生到哪里</b><p>新 AI 开工先看目标、已做完的东西、正在卡住的地方和不能碰的边界，不靠我重新口述半小时。</p></div>
+        <div class="collab-card"><b>做完把现场写回去</b><p>重要决定、进度和下一步都回写进 Markdown。换 Claude、Codex 或下一个会话，能从同一个位置继续。</p></div>
+        <div class="collab-card"><b>大任务才拆给多人</b><p>主 AI 先划清范围和隐私，再把重复清洗分给多个子 AI；最后由主 AI 对账，不让结果散成一地。</p></div>
+        <div class="collab-card"><b>每次纠错都留下记忆</b><p>反复发生的动作写成流程卡，跑成熟后再升成 Skill；文件改坏了还能用版本记录找回。</p></div>
+      </div>
+      <div class="speaker-seed"><strong>一句人话</strong><span>AI 不需要一直记得我；只要它每次都知道去哪里读、做完写回哪里。</span></div>
+    </section>
+
+    <section class="scene" id="skills" data-title="Skills 怎么接力">
+      <span class="act-mark">ACT 4 · 我的 AI 工作方法</span><p class="kicker">不是只有 5 件事，是 5 个成熟入口 + 27 条生长中的流程</p>
+      <h2>Skill 不是功能菜单，<br>是我把 AI <em>教会过一次</em>的工作方法。</h2>
+      <div class="skill-stats">
+        <div class="skill-stat"><strong>5</strong><span>已经正式封装、真实跑过的 Life OS Skill</span></div>
+        <div class="skill-stat"><strong>27</strong><span>已登记的流程卡 / Skill 候选，不让第二次从零开始</span></div>
+        <div class="skill-stat"><strong>1</strong><span>唯一源文件空间，Claude 与 Codex 读取同一套规则</span></div>
+      </div>
+      <div class="skill-system" aria-label="五个正式 Skill 的人话说明">
+        <div class="skill-card"><code>ingest</code><b>把原料带回来</b><span>导出、转录、清洗；先判断隐私，再进入冷库。</span></div>
+        <div class="skill-card"><code>wiki-render</code><b>从证据长出 Wiki</b><span>恢复编年史、命题、模式与人物，不替我编结论。</span></div>
+        <div class="skill-card"><code>roundtable</code><b>把问题想深</b><span>让不同人物真正交锋，我可以打断、反驳、修订。</span></div>
+        <div class="skill-card"><code>gongzhonghao</code><b>把素材写成我的表达</b><span>保存我的声音与犹豫，只交底稿，不替我定标题。</span></div>
+        <div class="skill-card"><code>human-sample</code><b>保存一个人的形状</b><span>不只总结知识；同时生成私密母页与公开侧写底稿。</span></div>
+      </div>
+      <div class="skill-truth">公开 Wiki、数字分身评测、短内容路由、播客全流程、自运转 Inbox 等都已经有流程或候选，只是还没为了“数量好看”提前包装成正式 Skill。这里仅统计 Life OS，不把平台自带工具和其它个人 Skill 混进来。</div>
+    </section>
+
+    <section class="scene" id="skill-pool" data-title="27 个流程与候选">
+      <span class="act-mark">ACT 4 · SKILL 生长池</span><p class="kicker">27 个名字，不是 27 个空想</p>
+      <h2>有些已经跑熟，<br>有些正在等<em>最后一次验证</em>。</h2>
+      <div class="candidate-board" aria-label="27 个流程卡与 Skill 候选名称">
+        <div class="candidate-group"><h3>导入与清洗 · 8</h3><code>podcast-export-transcription</code><code>audio-privacy-transcription</code><code>wechat-export-cleaning</code><code>feishu-multi-tenant-ingest</code><code>ai-chat-decontamination</code><code>official-account-ingest</code><code>flomo-apple-notes-ingest</code><code>xiaohongshu-ingest</code></div>
+        <div class="candidate-group"><h3>Wiki 与公开 · 5</h3><code>public-wiki-projector</code><code>privacy-release-checker</code><code>obsidian-template-builder</code><code>lifeos-onboarding</code><code>cross-review</code></div>
+        <div class="candidate-group"><h3>表达与分发 · 4</h3><code>expression-router</code><code>de-ai-taste-review</code><code>xiaohongshu-video-draft</code><code>build-log-writer</code></div>
+        <div class="candidate-group"><h3>数字分身 · 3</h3><code>digital-twin-eval</code><code>digital-twin-release-gate</code><code>voice-sample-extractor</code></div>
+        <div class="candidate-group"><h3>自运转与主 AI · 4</h3><code>self-operating-inbox</code><code>now-console-maintainer</code><code>lifeos-upgrade-audit</code><code>agent-orchestration</code></div>
+        <div class="candidate-group"><h3>生活功能 · 3</h3><code>health-assistant</code><code>painless-accounting</code><code>catch-turtle</code></div>
+      </div>
+      <div class="maturity-strip"><span><b>已经完整实战：</b>播客、隐私转录、微信、飞书、AI 聊天、公众号、Flomo / 备忘录</span><span><b>接近正式：</b>公开 Wiki 投影、数字分身评测</span><span><b>还等闭环：</b>小红书、自运转 Inbox、生活功能</span></div>
+    </section>
+
+    <section class="scene" id="cleaning" data-title="清洗前后">
+      <span class="act-mark">ACT 4 · 清洗不是改写</span><p class="kicker">拖动滑块看 before / after</p>
+      <h2>保留原料，<br>再生出<em>可追溯的结构</em>。</h2>
+      <div class="compare">
+        <div class="compare-stage" id="compareStage">
+          <div class="compare-pane before" aria-hidden="true"><div class="raw-line">[平台标记] 20XX-XX-XX 23:17</div><div class="raw-line">发言人 A：［已脱敏原始片段］</div><div class="raw-line">附件_未命名_00342...</div><div class="raw-line">重复平台元数据 / 噪音 / 格式残片</div></div>
+          <div class="compare-pane after" id="afterPane"><div class="clean-card"><b>［一句话标题种子］</b><p>type: note · visibility: private · source: 可追溯</p><p>事实、原话、AI 归纳分声部保存；不替本人补结论。</p></div></div>
+        </div>
+        <label class="compare-labels" for="compareRange"><span>原始导出</span><span>标准 Markdown</span></label>
+        <input id="compareRange" type="range" min="0" max="100" value="50" aria-label="拖动比较清洗前后">
+      </div>
+    </section>
+
+    <section class="scene" id="projection" data-title="private 怎么变成 open">
+      <span class="act-mark">ACT 5 · 给别人</span><p class="kicker">不是把私密页删几句就发布</p>
+      <h2>private 是完整母本，<br>open 是重新做出来的<em>公开投影</em>。</h2>
+      <div class="privacy-flow" aria-label="private 到 open 的五步">
+        <div class="privacy-step"><small>01</small><b>默认 private</b><span>没有明确标 open 的内容一律不出门；原始聊天、录音和日记留在本地。</span></div>
+        <div class="privacy-step"><small>02</small><b>先看是不是我的</b><span>本人没认领的 AI 总结、待确认判断，写得再漂亮也不进入公开候选。</span></div>
+        <div class="privacy-step"><small>03</small><b>划掉绝对红线</b><span>健康、家人、财务数字直接排除；人名、机构与可定位细节匿名化。</span></div>
+        <div class="privacy-step"><small>04</small><b>另做公开版本</b><span>母页原封不动。只取安全场景、方法和思考骨架，重新写成一张公开页。</span></div>
+        <div class="privacy-step"><small>05</small><b>只连公开世界</b><span>公开页只链接其它公开页；最后由我复核，AI 不能替我决定公开范围。</span></div>
+      </div>
+      <div class="privacy-source"><b>现在真实怎么运行：</b>这些规则已经写进 PROCESSING_RULES、公开 Wiki 投影矩阵，并由 ingest / wiki-render / human-sample 等 Skill 在各自步骤读取；但「private 母本 → 公开投影」还没有独立封装成正式 Skill，`public-wiki-projector` 正在候选池里。</div>
+      <div class="deep-dive"><details><summary>开源形态 · 暂定种子</summary><div class="inside">Obsidian-Agentic-LifeOS：前台 Obsidian 壳 + 后台规则与 Skills + 安装引导。先服务梅梅自己，再成为作品，再抽象成可复制工具包。UniverseOS 愿景只轻点一笔。</div></details></div>
+    </section>
+
+    <section class="scene" id="universe" data-title="产品脸">
+      <span class="act-mark">ACT 5 · 梅梅 UNIVERSE</span><p class="kicker">Life OS 的对外产品脸</p>
+      <h2>底层是系统，<br>对外是一座<em>可以走进去的宇宙</em>。</h2>
+      <p class="lead">访客看到的是脱敏后的星系入口；点开窗口，看见真实运行过的 Wiki、圆桌、数字分身与作品。它不是陈列柜，而是一组允许别人走近、回应和建立连接的接口。</p>
+      <a class="universe-link" href="index.html">现场打开星系页 <span aria-hidden="true">↗</span></a>
+      <div class="speaker-seed"><strong>文案种子</strong><span>让同频的人找到彼此；让表达进入世界，也让世界真实地回来。</span></div>
+    </section>
+
+    <section class="scene" id="connection" data-title="连接与回流">
+      <span class="act-mark">ACT 5 · BUILD IN CONNECTION</span><p class="kicker">去世界里探自己的坐标</p>
+      <h2>一个人无法只在自己的资料里，<br><em>认识自己</em>。</h2>
+      <p class="lead">做对外的 Life OS，不只是产品呈现。Build in public 让真实的表达被看见；build in connection 让同频的人走近，在交流、碰撞与共同创造里继续校准自己。</p>
+      <div class="connection-loop" aria-label="公开、连接与回流闭环">
+        <div class="connection-step"><b>内部梳理</b><span>从真实记录里知道「我此刻在哪」。</span></div>
+        <div class="connection-step"><b>安全投影</b><span>保留思考骨架，守住私人母本。</span></div>
+        <div class="connection-step"><b>公开建造</b><span>把过程、作品与未完成问题放进世界。</span></div>
+        <div class="connection-step"><b>同频连接</b><span>交流、反例与合作帮助我探到坐标。</span></div>
+        <div class="connection-step"><b>认识回流</b><span>新的证据回到 Life OS，开始下一轮校准。</span></div>
+      </div>
+      <div class="connection-return">外界反馈是新的材料与镜子，不会自动升级成「我是谁」的答案。</div>
+      <div class="speaker-seed"><strong>真实案例位</strong><span>以后补一条：一次公开表达 → 一个同频的人 → 一段对话 → 哪个自我判断被校准。</span></div>
+    </section>
+
+    <section class="scene" id="console" data-title="每日控制台">
+      <span class="act-mark">ACT 6 · 回到人</span><p class="kicker">此刻 · 我活着吗</p>
+      <h2>系统最后要回到，<br><em>今天怎么过</em>。</h2>
+      <div class="console" aria-label="每日四模式">
+        <button class="mode-card" type="button" aria-pressed="false"><b>接住自己</b><span>今天有没有回血？低能量时，家在哪里。</span></button><button class="mode-card" type="button" aria-pressed="false"><b>玩</b><span>今天有没有被点亮？好奇心去了哪里。</span></button><button class="mode-card" type="button" aria-pressed="false"><b>创造</b><span>今天有没有做出一点什么，让想法落地。</span></button><button class="mode-card" type="button" aria-pressed="false"><b>连接</b><span>今天有没有走进真实关系，在他人的回应里继续辨认自己的坐标。</span></button>
+      </div>
+      <div class="spine">脊柱 · 越做越像自己</div>
+      <div class="speaker-seed"><strong>现场互动</strong><span>点亮今天所在的模式；它不是打分表，只是辨认此刻。</span></div>
+    </section>
+
+    <section class="scene final" id="final" data-title="可持续地活成我">
+      <p class="kicker">ACT 6 · 收尾</p>
+      <h2>这不是一个系统。<br>是一个<em>正在，并且可持续地，活成自己的人</em>。</h2>
+      <div class="speaker-seed"><strong>收尾种子</strong><span>最后一句停在这里，由梅梅自己说完。</span></div>
+      <a class="universe-link" href="index.html">回到梅梅宇宙 <span aria-hidden="true">↗</span></a>
+    </section>
+  </main>
+</div>
+
+<div class="present-ui" aria-label="演示控制">
+  <button class="exit-present" id="exitPresent" type="button">Esc · 退出</button>
+  <div class="nav-buttons"><button id="prevSlide" type="button" aria-label="上一页">←</button><button id="nextSlide" type="button" aria-label="下一页">→</button></div>
+  <div class="count"><span id="currentSlide">1</span> / <span id="totalSlides">1</span> · <span id="currentTitle"></span></div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var root=document.documentElement,body=document.body;
+  var themeButton=document.getElementById('themeToggle');
+  var savedTheme=localStorage.getItem('meimei-talk-theme');
+  var preferredDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(savedTheme||(preferredDark?'night':'day'));
+  function setTheme(theme){root.dataset.theme=theme;themeButton.setAttribute('aria-pressed',String(theme==='night'));themeButton.querySelector('.wide').textContent=theme==='night'?'白天':'夜间';localStorage.setItem('meimei-talk-theme',theme)}
+  themeButton.addEventListener('click',function(){setTheme(root.dataset.theme==='night'?'day':'night')});
+
+  var layers={
+    archive:'<h3>冷库 · 沉积层</h3><p>保存原始导出、时间与来源。原料只增不改，清洗与蒸馏另生文件。</p><ul><li>目标：全，不追求读完</li><li>保护：核心隐私不上传、不入公开仓</li><li>作用：未来判断始终能回到证据</li></ul>',
+    brain:'<h3>第二大脑 · 代谢层</h3><p>承接 Inbox、原子笔记、MOC 与当前项目。这里不是仓库，是正在呼吸的工作台。</p><ul><li>目标：小而活跃</li><li>结局：结晶、沉降或消亡</li><li>作用：让材料进入真实问题与行动</li></ul>',
+    wiki:'<h3>Wiki · 结晶层</h3><p>只收被验证、可追溯、已认领的内容。主题页与视图共同构成「我此刻在哪」。</p><ul><li>目标：精，不求多</li><li>边界：事实 / 原话 / 推断分开</li><li>作用：校准过去，拿回叙事权</li></ul>'
+  };
+  var layerPanel=document.getElementById('layerPanel');
+  function selectLayer(key){layerPanel.innerHTML=layers[key];document.querySelectorAll('[data-layer]').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.layer===key))})}
+  document.querySelectorAll('[data-layer]').forEach(function(b){b.addEventListener('click',function(){selectLayer(b.dataset.layer)})});selectLayer('archive');
+
+  var learning={question:'<div class="conversation"><div class="bubble me"><small>梅梅的问题</small>［放一个此刻真的卡住、值得争论的问题］</div><div class="bubble seed"><small>规则</small>没有真实分歧，不开桌；先确定问题，不急着找答案。</div></div>',debate:'<div class="conversation"><div class="bubble"><small>反对席</small>我要挑战你的前提：这个问题有没有被你自己的叙事框住？</div><div class="bubble seed"><small>梅梅可打断</small>点名、追问、要求举证，或把讨论拉回身体与现实。</div></div>',sources:'<div class="conversation"><div class="bubble"><small>返回真实资料</small>列出需要读的原典、研究与反例；明确哪些只是模拟观点。</div><div class="bubble seed"><small>回看</small>读完再回桌，修正自己的问题，而不是收藏一份漂亮总结。</div></div>'};
+  var learningPanel=document.getElementById('learningPanel');
+  function selectTab(key){learningPanel.innerHTML=learning[key];document.querySelectorAll('[data-tab]').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.tab===key))})}
+  document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('click',function(){selectTab(b.dataset.tab)})});selectTab('question');
+
+  var flows={capture:'保存原文、来源与日期；不覆盖原料，也不要求人在入口先整理。',recognize:'识别它主要是事实证据、学习材料、表达种子、行动候选，还是暂时沉积。',connect:'只链接真正相关的页面；外部材料与 AI 归纳，不自动变成梅梅已经认领的观点。',recall:'在开会客厅、做产品、想表达、周度回顾或需要决策时，让它重新出现。',output:'输出过的活笔记可以删除；深刻认领的进入 Wiki，暂时无用的沉降，保持系统代谢。'};
+  var flowDetail=document.getElementById('flowDetail');
+  function selectFlow(key){flowDetail.textContent=flows[key];document.querySelectorAll('[data-flow]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.flow===key))})}
+  document.querySelectorAll('[data-flow]').forEach(function(b){b.addEventListener('click',function(){selectFlow(b.dataset.flow)})});selectFlow('capture');
+
+  document.querySelectorAll('.mode-card').forEach(function(b){b.addEventListener('click',function(){b.setAttribute('aria-pressed',String(b.getAttribute('aria-pressed')!=='true'))})});
+  var range=document.getElementById('compareRange'),after=document.getElementById('afterPane');
+  function updateCompare(){after.style.clipPath='inset(0 '+(100-range.value)+'% 0 0)'}
+  range.addEventListener('input',updateCompare);updateCompare();
+
+  var scenes=Array.prototype.slice.call(document.querySelectorAll('#deck>.scene'));
+  var presentIndex=0;
+  var presentToggle=document.getElementById('presentToggle');
+  document.getElementById('totalSlides').textContent=scenes.length;
+  function showSlide(n){presentIndex=Math.max(0,Math.min(scenes.length-1,n));scenes.forEach(function(s,i){s.classList.toggle('active',i===presentIndex);s.setAttribute('aria-hidden',String(i!==presentIndex))});document.getElementById('currentSlide').textContent=presentIndex+1;document.getElementById('currentTitle').textContent=scenes[presentIndex].dataset.title||'';location.hash=scenes[presentIndex].id}
+  function enterPresent(fromButton){var current=scenes.findIndex(function(s){return s.getBoundingClientRect().top>-window.innerHeight*.35});presentIndex=current<0?0:current;body.classList.add('presenting');showSlide(presentIndex);if(fromButton!==false)scenes[presentIndex].focus&&scenes[presentIndex].focus()}
+  function exitPresent(){body.classList.remove('presenting');scenes.forEach(function(s){s.classList.remove('active');s.removeAttribute('aria-hidden')});scenes[presentIndex].scrollIntoView({block:'start'});presentToggle.focus()}
+  presentToggle.addEventListener('click',function(){enterPresent()});
+  document.querySelectorAll('[data-enter-present]').forEach(function(b){b.addEventListener('click',function(){enterPresent()})});
+  document.getElementById('exitPresent').addEventListener('click',exitPresent);
+  document.getElementById('prevSlide').addEventListener('click',function(){showSlide(presentIndex-1)});
+  document.getElementById('nextSlide').addEventListener('click',function(){showSlide(presentIndex+1)});
+  document.addEventListener('keydown',function(e){if(!body.classList.contains('presenting'))return;if(e.key==='Escape'){exitPresent();return}if(['ArrowRight','PageDown'].indexOf(e.key)>-1||(e.key===' '&&!/BUTTON|INPUT|SUMMARY/.test(document.activeElement.tagName))){e.preventDefault();showSlide(presentIndex+1)}else if(['ArrowLeft','PageUp'].indexOf(e.key)>-1){e.preventDefault();showSlide(presentIndex-1)}else if(e.key==='Home'){e.preventDefault();showSlide(0)}else if(e.key==='End'){e.preventDefault();showSlide(scenes.length-1)}});
+
+  var tocLinks=Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  if('IntersectionObserver' in window){var observer=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){tocLinks.forEach(function(a){a.setAttribute('aria-current',String(a.getAttribute('href')==='#'+entry.target.id))})}})},{rootMargin:'-20% 0px -68% 0px'});scenes.forEach(function(s){observer.observe(s)})}
+})();
+</script>
+</body>
+</html>

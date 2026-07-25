@@ -1,0 +1,10 @@
+name = "meimei-twin"
+main = "index.js"
+compatibility_date = "2024-11-01"
+
+# Cloudflare Workers AI 绑定:让 Worker 里能用 env.AI.run(...)
+[ai]
+binding = "AI"
+
+# 部署前把下面这行的 account_id 填上你自己的(Cloudflare 控制台右侧 / `wrangler whoami` 能看到)
+account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"

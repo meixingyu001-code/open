@@ -7,4 +7,9 @@ compatibility_date = "2024-11-01"
 binding = "AI"
 
 # 部署前把下面这行的 account_id 填上你自己的(Cloudflare 控制台右侧 / `wrangler whoami` 能看到)
-account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
+account_id = "1d6138505fc56ecd348b5d32a0d0eb8d"
+
+# Vectorize:公开语料检索库,让分身答话前先检索原文再引用(2026-07-28 加)
+[[vectorize]]
+binding = "TWIN_VECTORS"
+index_name = "meimei-twin-corpus"

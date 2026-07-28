@@ -348,14 +348,23 @@
   // 拖拽标题栏
   function dragify(w, bar){
     var down=false, ox=0, oy=0;
-    bar.addEventListener('mousedown', function(e){
-      if(e.target.classList.contains('x')) return;
-      down=true; ox=e.clientX-w.offsetLeft; oy=e.clientY-w.offsetTop; e.preventDefault();
-    });
-    window.addEventListener('mousemove', function(e){
-      if(!down) return; w.style.left=(e.clientX-ox)+'px'; w.style.top=(e.clientY-oy)+'px';
-    });
-    window.addEventListener('mouseup', function(){ down=false; });
+    function start(x,y,target){
+      if(target && target.classList.contains('x')) return;
+      down=true; ox=x-w.offsetLeft; oy=y-w.offsetTop;
+    }
+    function move(x,y){ if(!down) return; w.style.left=(x-ox)+'px'; w.style.top=(y-oy)+'px'; }
+    function end(){ down=false; }
+    bar.addEventListener('mousedown', function(e){ start(e.clientX,e.clientY,e.target); e.preventDefault(); });
+    window.addEventListener('mousemove', function(e){ move(e.clientX,e.clientY); });
+    window.addEventListener('mouseup', end);
+    // 手机/平板触屏:标题栏也能拖动,不然桌面隐喻在手机上就只剩"能开能关"
+    bar.addEventListener('touchstart', function(e){
+      var t=e.touches[0]; start(t.clientX,t.clientY,e.target);
+    }, {passive:true});
+    window.addEventListener('touchmove', function(e){
+      if(!down) return; var t=e.touches[0]; move(t.clientX,t.clientY); e.preventDefault();
+    }, {passive:false});
+    window.addEventListener('touchend', end);
   }
 
   sky.addEventListener('click', function(e){

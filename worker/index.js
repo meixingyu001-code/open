@@ -19,6 +19,15 @@ const EMBED_MODEL = "@cf/baai/bge-m3"; // 检索向量化用,继续留在 Cloudf
 const TOP_K = 3;           // 每次检索取几段最相关原文(不宜太多,片段一多模型容易把不同来源的细节拼错)
 const MAX_TURNS = 16;      // 只保留最近若干轮,防止上下文过长
 const MAX_CHARS = 1500;    // 单条用户输入上限
+// 别再往下调:这个模型会先吐一段内部推理再写正文,预算给少了(试过 260)推理就把额度吃完,
+// 正文写不出来,最后只会返回"卡了一下"。500 是实测能稳定出正文的下限。
+const MAX_OUT_TOKENS = 500;
+// 免费模型排队超过这个时长就放弃,改走兜底。注意最坏情况 = 这个超时 + 兜底生成时间,
+// 所以别设太大;设太小又会把本来能出好结果的请求提前掐掉。7 秒是实测的折中。
+const OPENROUTER_TIMEOUT_MS = 7000;
+const RETRIEVE_TIMEOUT_MS = 4000;    // 检索超时就当没检索到,不拖住回答
+// 整条消息就是一句问候时跳过检索(见下方调用处)
+const SMALLTALK = /^(你好|您好|hi|hello|hey|哈喽|嗨|在吗|在么|早|早上好|上午好|下午好|晚上好|测试|test)[\s!！。.,，~、?？]*$/i;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -66,7 +75,9 @@ export default {
     }
 
     const lastUserMsg = history[history.length - 1].content;
-    const retrieved = await retrieveContext(env, lastUserMsg);
+    // 纯打招呼不值得跑一趟检索:embedding + 向量查询大约要 2-6 秒,而"你好"根本用不到原文。
+    // 只在整条消息就是一句问候时跳过;像"不上班?"这种短问题仍然走检索。
+    const retrieved = SMALLTALK.test(lastUserMsg.trim()) ? "" : await retrieveContext(env, lastUserMsg);
 
     const systemContent = `${SYSTEM_PROMPT}
 
@@ -81,7 +92,9 @@ ${PUBLIC_BEHAVIOR_RULES}
 ${PUBLIC_CORPUS}
 ${retrieved ? `\n【检索到的相关原文(优先用这些,能引用具体的话就引用)】\n以下片段来自梅梅公开发表过的播客逐字稿或公众号文章,按和当前问题的相关度检索出来,可能来自不同期节目/不同文章。回答时优先基于这些原文本身的内容和措辞来回应,可以直接化用或轻量引用里面的句子。\n\n**严禁的事(比语气重要)**:\n1. 不要发明任何原文里没有出现过的具体活动、比喻、物件、场景或例子——哪怕听起来很符合人设、很像她会说的话,只要片段原文没写,就不能说。你不是在角色扮演着编细节,你是在转述真实材料。\n2. 不要把不同片段里的具体年份、时间、次数、地点拼接混用成一个新说法(比如编出"第一次…第二次…"这种原文不支持的叙事)。\n3. 如果检索到的片段撑不起用户问题里问的具体细节,就诚实地说得更概括、更简短,或者说这部分她没细讲过,不要为了显得生动而编。\n4. 如果检索结果和问题不太相关,就忽略它们,回到上面的接待手册,同样不要编。\n不要提"检索""向量""语料库"这类技术词。\n\n${retrieved}` : ""}
 
-回答必须短：普通问题默认 1 段，最多 2 段；不要列清单，除非用户明确要清单；每次只抓 1 个最相关的钩子，不要把 Life OS、自我秩序、越做越像自己、AI、产品化等全部倒出来。`;
+回答必须短：普通问题默认 1 段，最多 2 段；不要列清单，除非用户明确要清单；每次只抓 1 个最相关的钩子，不要把 Life OS、自我秩序、越做越像自己、AI、产品化等全部倒出来。
+
+最后一条，最重要：**直接说话，第一个字就是回答本身。** 不要写任何思考过程或开场白——不要出现"嗯，用户让我…""根据规则我需要…""查看提供的材料…""以上语料显示…"这类句子，也不要提到规则、材料、语料、检索、片段、用户。就像本人在微信上随口回一句那样开口。`;
     const messages = [{ role: "system", content: systemContent }, ...history];
 
     try {
@@ -101,8 +114,9 @@ function looksLikeLeakedReasoning(text) {
   const asciiLetters = (text.match(/[a-zA-Z]/g) || []).length;
   if (asciiLetters > text.length * 0.4 && text.length > 20) return true; // 大段英文,不像中文口吻
   if (/^(we need to|i should|let me|okay,? i|the user (asks|wants))/i.test(text.trim())) return true;
-  // 中文的"元语言"泄露:模型在讲自己怎么检索/怎么分析,而不是直接回答
-  if (/检索到的(材料|片段|内容)|第[一二三四五1-9]个片段|根据(检索|以上|上面的)(材料|片段|信息)|用户问(我|的是)|这个问题需要/.test(text)) return true;
+  // 中文的"元语言"泄露:模型在讲自己怎么检索/怎么分析/在遵守什么规则,而不是直接回答。
+  // 这类开场("嗯,用户让我…""根据规则,我需要…""查看提供的语料包…")最破坏观感,命中就当失败。
+  if (/检索到的(材料|片段|内容)|第[一二三四五1-9]个片段|根据(检索|以上|上面的|规则|提供的)|用户(问|让|叫|想|要|说)我|用户问的是|这个问题需要|语料(包|库)|我需要(严格)?(基于|遵守|按照)|查看(提供的|上面)|(以上|上述)(材料|语料|内容)显示/.test(text)) return true;
   return false;
 }
 
@@ -110,21 +124,31 @@ function looksLikeLeakedReasoning(text) {
 async function callBrain(env, messages) {
   if (env.OPENROUTER_API_KEY) {
     try {
-      const resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
-          "HTTP-Referer": "https://meixingyu001-code.github.io",
-          "X-Title": "数字梅梅",
-        },
-        body: JSON.stringify({
-          model: OPENROUTER_MODEL,
-          messages,
-          max_tokens: 500,
-          temperature: 0.7,
-        }),
-      });
+      // 免费模型偶尔会排队几十秒。不设上限的话用户就得干等,
+      // 所以超过 OPENROUTER_TIMEOUT_MS 就掐掉,直接走 Cloudflare 兜底(通常更快)。
+      const ac = new AbortController();
+      const timer = setTimeout(() => ac.abort(), OPENROUTER_TIMEOUT_MS);
+      let resp;
+      try {
+        resp = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          signal: ac.signal,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+            "HTTP-Referer": "https://meixingyu001-code.github.io",
+            "X-Title": "数字梅梅",
+          },
+          body: JSON.stringify({
+            model: OPENROUTER_MODEL,
+            messages,
+            max_tokens: MAX_OUT_TOKENS,
+            temperature: 0.7,
+          }),
+        });
+      } finally {
+        clearTimeout(timer);
+      }
       if (!resp.ok) {
         throw new Error(`OpenRouter ${resp.status}: ${await resp.text()}`);
       }
@@ -134,11 +158,11 @@ async function callBrain(env, messages) {
       throw new Error("OpenRouter 返回为空或疑似泄露内部思考");
     } catch (err) {
       // OpenRouter 挂了/限流了/输出异常,退回 Cloudflare 兜底,不让用户直接看到错误或垃圾内容
-      const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: 500, temperature: 0.7 });
+      const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: MAX_OUT_TOKENS, temperature: 0.7 });
       return (out && (out.response || out.result || "")).toString().trim();
     }
   }
-  const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: 500, temperature: 0.7 });
+  const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: MAX_OUT_TOKENS, temperature: 0.7 });
   return (out && (out.response || out.result || "")).toString().trim();
 }
 
@@ -147,7 +171,11 @@ async function callBrain(env, messages) {
 async function retrieveContext(env, queryText) {
   if (!env.TWIN_VECTORS || !queryText) return "";
   try {
-    const embedded = await env.AI.run(EMBED_MODEL, { text: [queryText.slice(0, 800)] });
+    // 检索只是锦上添花:超时就当没检索到,继续用接待手册回答,不要拖着用户等。
+    const embedded = await Promise.race([
+      env.AI.run(EMBED_MODEL, { text: [queryText.slice(0, 800)] }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error("embed timeout")), RETRIEVE_TIMEOUT_MS)),
+    ]);
     const vector = embedded && embedded.data && embedded.data[0];
     if (!vector) return "";
     const result = await env.TWIN_VECTORS.query(vector, { topK: TOP_K, returnMetadata: true });

@@ -108,7 +108,7 @@
   .mmu[data-theme="day"] .star.visited .label::before{opacity:.94;background:radial-gradient(ellipse,rgba(255,247,169,.95),rgba(255,222,102,.42) 46%,rgba(255,248,211,0) 76%)}
   .mmu[data-theme="day"] .star.visited .label::after{background:#f1aa25;box-shadow:0 0 0 1px #fffbd8,0 0 15px 6px rgba(255,202,48,.86)}
   .mmu[data-theme="night"] .star.visited .label{text-shadow:0 1px 8px rgba(0,0,0,.9),0 0 23px rgba(225,248,153,.95),0 0 42px rgba(161,223,123,.72)}
-  .star.soon{color:var(--faint);font-size:.95rem}
+  .star.soon{color:var(--faint)}
   .star.soon:not(.unlocked){opacity:.38;filter:grayscale(.35);cursor:help}
   .star.soon.unlocked{opacity:1;filter:none}
   .mmu[data-theme="night"] .star{color:#e4efdc}
@@ -119,13 +119,15 @@
   @keyframes entranceSpark{0%{opacity:0;transform:translateY(-50%) scale(.2)}55%{opacity:1;transform:translateY(-50%) scale(1.65)}100%{opacity:.92;transform:translateY(-50%) scale(1)}}
   @media (prefers-reduced-motion:reduce){.star,.star .label::before,.star .label::after{animation:none!important}}
 
+  /* 字号统一走 .star 上的 clamp，每颗星只改颜色/角度/间距，不再各自定字号；
+     只有 s7「先了解我」作为入口锚点略大一号。 */
   .s1{top:18%;left:19%;animation-delay:0s;--awake:.3s}.s1 .label{padding:.15rem .35rem;color:#244b27;transform:rotate(-5deg)}
-  .s2{top:72%;left:16%;animation-delay:1.2s;--awake:.8s}.s2 .label{font-size:.95rem;color:#4b321f;transform:rotate(-3deg)}
-  .s3{top:69%;left:60%;animation-delay:.6s;--awake:2.3s}.s3 .label{font-size:.92rem;letter-spacing:.14em;color:#1c4c47;transform:skewX(-8deg)}
-  .s4{top:34%;left:85%;animation-delay:1.8s;--awake:1.3s}.s4 .label{font-family:var(--sans);font-size:.86rem;letter-spacing:.08em;color:#173f25;transform:rotate(9deg)}
-  .s5{top:77%;left:82%;animation-delay:.9s;--awake:1.8s}.s5 .label{font-size:.95rem;color:#263e2b;transform:rotate(-18deg)}
-  .s6{top:16%;left:67%;animation-delay:2.1s;--awake:2.8s}.s6 .label{font-size:.9rem;color:#526644;transform:rotate(5deg);text-shadow:0 1px 2px rgba(255,255,255,.98),0 0 7px rgba(255,252,220,.98),0 2px 14px rgba(244,224,128,.82)}
-  .s7{top:75%;left:46%;animation-delay:1.5s;--awake:3.3s}.s7 .label{font-size:1.28rem;letter-spacing:.28em;color:#f4f6df;font-weight:500;transform:skewX(-10deg);text-shadow:0 2px 10px rgba(24,73,61,.96),0 0 20px rgba(255,255,230,.86)}
+  .s2{top:72%;left:16%;animation-delay:1.2s;--awake:.8s}.s2 .label{color:#4b321f;transform:rotate(-3deg)}
+  .s3{top:69%;left:60%;animation-delay:.6s;--awake:2.3s}.s3 .label{letter-spacing:.14em;color:#1c4c47;transform:skewX(-8deg)}
+  .s4{top:34%;left:85%;animation-delay:1.8s;--awake:1.3s}.s4 .label{font-family:var(--sans);letter-spacing:.08em;color:#173f25;transform:rotate(9deg)}
+  .s5{top:77%;left:82%;animation-delay:.9s;--awake:1.8s}.s5 .label{color:#263e2b;transform:rotate(-18deg)}
+  .s6{top:16%;left:67%;animation-delay:2.1s;--awake:2.8s}.s6 .label{color:#526644;transform:rotate(5deg);text-shadow:0 1px 2px rgba(255,255,255,.98),0 0 7px rgba(255,252,220,.98),0 2px 14px rgba(244,224,128,.82)}
+  .s7{top:75%;left:46%;animation-delay:1.5s;--awake:3.3s}.s7 .label{font-size:clamp(1.02rem,1.3vw,1.22rem);letter-spacing:.24em;color:#f4f6df;font-weight:500;transform:skewX(-10deg);text-shadow:0 2px 10px rgba(24,73,61,.96),0 0 20px rgba(255,255,230,.86)}
   .mmu[data-theme="night"] .s1 .label,.mmu[data-theme="night"] .s2 .label,.mmu[data-theme="night"] .s3 .label,
   .mmu[data-theme="night"] .s4 .label,.mmu[data-theme="night"] .s5 .label,.mmu[data-theme="night"] .s6 .label{color:#e4efdc}
   .mmu[data-theme="night"] .s7 .label{color:#f3f7dc;text-shadow:0 2px 12px rgba(0,0,0,.95),0 0 22px rgba(229,247,196,.86)}
@@ -149,6 +151,17 @@
     font-family:var(--sans);font-size:.74rem;letter-spacing:.14em;color:var(--ink-soft);padding:.42rem .78rem;border-radius:99px;
     background:rgba(246,250,242,.34);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px);text-shadow:0 1px 8px rgba(255,255,255,.8)}
   .mmu[data-theme="night"] .foot{background:rgba(7,23,18,.25);text-shadow:0 1px 8px rgba(0,0,0,.75)}
+
+  /* 新人引导:下一个推荐的星球轻轻呼吸发光 + 底部一行小字。全部逛过就自动消失。 */
+  .star.guide-next::after{content:"";position:absolute;inset:-8%;border-radius:999px;z-index:-1;pointer-events:none;
+    border:1px solid rgba(255,206,92,.7);box-shadow:0 0 20px 5px rgba(255,206,92,.34);
+    animation:guidePulse 2.6s ease-in-out infinite}
+  @keyframes guidePulse{0%,100%{opacity:.3;transform:scale(.96)}50%{opacity:1;transform:scale(1.07)}}
+  .guide-hint{position:absolute;z-index:4;bottom:3.9rem;left:50%;transform:translateX(-50%);white-space:nowrap;
+    font-family:var(--sans);font-size:.72rem;letter-spacing:.1em;color:var(--ink-soft);padding:.4rem .85rem;border-radius:99px;
+    background:rgba(246,250,242,.46);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px);text-shadow:0 1px 8px rgba(255,255,255,.8)}
+  .mmu[data-theme="night"] .guide-hint{background:rgba(7,23,18,.34);text-shadow:0 1px 8px rgba(0,0,0,.75)}
+  @media (prefers-reduced-motion:reduce){.star.guide-next::after{animation:none;opacity:.85}}
 
   /* 窗口 */
   .win{position:absolute;z-index:20;width:min(390px,86vw);max-height:calc(100vh - 96px);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;
@@ -183,7 +196,14 @@
   .mmu[data-theme="night"] .chatbar input{background:rgba(255,255,255,.08)}
   .chatbar button{font-family:var(--sans);font-size:.85rem;color:var(--ink);background:rgba(127,159,119,.22);border:1px solid var(--win-line);border-radius:2rem;padding:.55em 1.1em;cursor:pointer}
   .chatbar button:disabled{opacity:.5;cursor:default}
-  .bubble.typing{opacity:.6;font-style:italic}
+  /* 免费模型有时要等好几秒。动起来的等待比一句静止的"正在想…"体感短很多。 */
+  .bubble.typing{opacity:.75;font-style:italic;display:flex;align-items:center;gap:.5rem}
+  .bubble.typing .dots{display:inline-flex;gap:3px}
+  .bubble.typing .dots i{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.35;
+    animation:twinDot 1.25s ease-in-out infinite}
+  .bubble.typing .dots i:nth-child(2){animation-delay:.18s}
+  .bubble.typing .dots i:nth-child(3){animation-delay:.36s}
+  @keyframes twinDot{0%,100%{opacity:.25;transform:translateY(0)}45%{opacity:.95;transform:translateY(-3px)}}
   .quote{padding-left:.85rem;border-left:2px solid rgba(92,127,89,.38);font-size:1.02rem;line-height:1.75}
   .tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}.tag{font-family:var(--sans);font-size:.7rem;color:var(--ink-soft);border:1px solid var(--win-line);border-radius:99px;padding:.2rem .55rem}
   .win .go{display:inline-block;margin-top:1rem;font-family:var(--sans);font-size:.85rem;letter-spacing:.06em;
@@ -204,7 +224,7 @@
     .star{min-width:86px;min-height:38px;padding:.35rem .5rem;font-size:.78rem;letter-spacing:.04em}
     .s1{top:21%;left:22%}.s2{top:35%;left:22%}.s3{top:51%;left:73%}
     .s4{top:38%;left:75%}.s5{top:69%;left:30%}.s6{top:76%;left:72%}.s7{top:60%;left:55%}
-    .s7 .label{font-size:1.08rem;letter-spacing:.2em}
+    .s7 .label{font-size:.92rem;letter-spacing:.18em}
     .hint{display:none}
     .garden-intro{top:14%;left:50%;width:72vw}.garden-intro strong{font-size:.9rem}.garden-intro span{font-size:.64rem;line-height:1.6}
     .walker{display:none}
@@ -243,13 +263,20 @@
 
   <div class="walker" id="walker" aria-hidden="true"><img class="walker-sprite" id="walker-sprite" src="assets/meimei-walk-4.webp" alt=""></div>
 
+  <p class="guide-hint" id="guideHint" hidden></p>
+
   <p class="foot" id="foot">把我带回自己身上。<a href="mobile.html" style="margin-left:.6em;text-decoration:underline;color:inherit;opacity:.6">手机版</a></p>
 </div>
 
 <script>
 (function(){
   var mmu=document.getElementById('mmu'), sky=document.getElementById('sky'),
-      walker=document.getElementById('walker'), walkerSprite=document.getElementById('walker-sprite');
+      walker=document.getElementById('walker'), walkerSprite=document.getElementById('walker-sprite'),
+      guideHint=document.getElementById('guideHint');
+
+  // 新人建议路线:先认识人 → 聊两句 → 想往深里看再进 Wiki/沙龙 → 最后才是 Life OS
+  var GUIDE=['intro','twin','wiki','salon','life'];
+  var GUIDE_LABEL={intro:'先了解我',twin:'和梅梅聊天',wiki:'人生 Wiki',salon:'问题沙龙',life:'Life OS'};
 
   var CORE=['intro','wiki','salon','twin','life'], visited=[];
   try{ visited=JSON.parse(localStorage.getItem('mmu-visited-v1')||'[]'); }catch(e){ visited=[]; }
@@ -281,6 +308,20 @@
     next.classList.toggle('unlocked',unlocked);
     next.setAttribute('aria-disabled',unlocked?'false':'true');
     next.querySelector('.hint').textContent=unlocked?'桥已经亮了，去看看下一颗星':'点亮五个地点后，桥的另一边会醒来';
+    updateGuide();
+  }
+  // 引导:把光标停在建议路线上第一个还没点过的星球
+  function updateGuide(){
+    sky.querySelectorAll('.star').forEach(function(s){ s.classList.remove('guide-next'); });
+    var nextKey=null;
+    for(var i=0;i<GUIDE.length;i++){ if(visited.indexOf(GUIDE[i])<0){ nextKey=GUIDE[i]; break; } }
+    if(!nextKey){ guideHint.hidden=true; return; }   // 都逛过了就不再打扰
+    var el=sky.querySelector('[data-app="'+nextKey+'"]');
+    if(el) el.classList.add('guide-next');
+    guideHint.hidden=false;
+    guideHint.textContent=visited.length===0
+      ? '没头绪的话，从「'+GUIDE_LABEL[nextKey]+'」开始'
+      : '接下来可以看「'+GUIDE_LABEL[nextKey]+'」';
   }
   function markVisited(key){
     if(CORE.indexOf(key)>-1&&visited.indexOf(key)<0){visited.push(key);saveVisited();updateGarden();}
@@ -349,15 +390,20 @@
       add('user',text); history.push({role:'user',content:text});
       inp.value=''; inp.focus(); btn.disabled=true;
       if(!TWIN_API){ add('assistant','(分身马上接上线,先喝口水~)'); btn.disabled=false; return; }
-      var typing=add('assistant','数字梅梅正在想…'); typing.classList.add('typing');
+      var typing=add('assistant','数字梅梅正在想'); typing.classList.add('typing');
+      typing.innerHTML='数字梅梅正在想<span class="dots"><i></i><i></i><i></i></span>';
+      // 等久了换句话,让人知道还在跑,不是卡死了
+      var waitTimer=setTimeout(function(){
+        typing.innerHTML='还在想，稍等一下<span class="dots"><i></i><i></i><i></i></span>';
+      },6000);
       fetch(TWIN_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})})
         .then(function(r){return r.json();})
         .then(function(d){
-          typing.remove();
+          clearTimeout(waitTimer); typing.remove();
           var reply=d.reply||d.error||'……(卡了一下,再说一次?)';
           add('assistant',reply); history.push({role:'assistant',content:reply});
         })
-        .catch(function(){ typing.remove(); add('assistant','(我这边断线了,待会儿再聊?)'); })
+        .catch(function(){ clearTimeout(waitTimer); typing.remove(); add('assistant','(我这边断线了,待会儿再聊?)'); })
         .finally(function(){ btn.disabled=false; });
     });
   }

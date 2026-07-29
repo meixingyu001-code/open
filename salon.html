@@ -2,140 +2,894 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>问题沙龙 · 梅梅宇宙</title>
-<style>
-  :root{
-    --serif:"Songti SC","Source Han Serif SC","Noto Serif SC","STSong",Georgia,serif;
-    --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,sans-serif;
-    --ink:#2c4430; --ink-soft:#557056; --faint:#8ba488;
-    --paper:#f4f8ef; --card:rgba(255,255,255,.7); --line:rgba(40,56,43,.14);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    font-family:var(--serif);color:var(--ink);line-height:1.75;
-    background:
-      radial-gradient(1200px 600px at 80% -10%, rgba(198,226,182,.5), transparent),
-      radial-gradient(900px 500px at 0% 100%, rgba(206,232,214,.45), transparent),
-      var(--paper);
-    min-height:100vh;padding:0 1.5rem 5rem;
-  }
-  .wrap{max-width:760px;margin:0 auto}
-
-  .top{display:flex;justify-content:space-between;align-items:center;padding:1.6rem 0 3rem;font-family:var(--sans)}
-  .back{font-size:.8rem;letter-spacing:.12em;color:var(--ink-soft);text-decoration:none;
-        border:1px solid var(--line);border-radius:2rem;padding:.4em 1.1em;transition:.25s}
-  .back:hover{background:rgba(255,255,255,.6)}
-  .brand{font-size:.78rem;letter-spacing:.3em;color:var(--faint)}
-
-  h1{font-size:clamp(2rem,5vw,3rem);letter-spacing:.04em;line-height:1.25;margin-bottom:1rem}
-  .lead{font-size:clamp(1rem,2vw,1.15rem);color:var(--ink-soft);margin-bottom:1.4rem}
-  .belief{font-family:var(--sans);font-size:.86rem;letter-spacing:.06em;color:var(--faint);
-          border-left:2px solid var(--line);padding-left:1rem}
-
-  section{margin-top:4rem}
-  .kicker{font-family:var(--sans);font-size:.7rem;letter-spacing:.28em;color:var(--faint);margin-bottom:.9rem}
-  h2{font-size:1.5rem;letter-spacing:.03em;margin-bottom:1.5rem}
-
-  /* 循环 */
-  .loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
-  .step{background:var(--card);border:1px solid var(--line);border-radius:.9rem;padding:1.1rem 1.2rem}
-  .step .n{font-family:var(--sans);font-size:.7rem;letter-spacing:.2em;color:var(--faint)}
-  .step .t{font-size:1.1rem;margin:.3rem 0 .35rem}
-  .step .d{font-family:var(--sans);font-size:.83rem;color:var(--ink-soft);line-height:1.6}
-
-  /* 实录 */
-  .round{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;padding:2rem 1.8rem}
-  .ask{font-size:1.2rem;line-height:1.7;padding-bottom:1.4rem;margin-bottom:1.4rem;border-bottom:1px solid var(--line)}
-  .ask span{display:block;font-size:.95rem;color:var(--ink-soft);margin-top:.5rem}
-  .line{margin:1.05rem 0;font-size:1.02rem;line-height:1.75}
-  .who{font-family:var(--sans);font-weight:700;font-size:.9rem;letter-spacing:.04em}
-  .cue{font-family:var(--sans);font-size:.76rem;color:var(--faint)}
-  .line.her{padding:1rem 1.1rem;background:rgba(255,255,255,.65);border-radius:.7rem;border:1px solid var(--line)}
-
-  .took{margin-top:1.6rem;padding-top:1.5rem;border-top:1px solid var(--line)}
-  .took .row{display:flex;gap:1.1rem;margin:.8rem 0;align-items:baseline;flex-wrap:wrap}
-  .took .k{font-family:var(--sans);font-size:.72rem;letter-spacing:.16em;color:var(--faint);flex:0 0 5.5rem}
-  .took .v{flex:1 1 240px;font-size:1.05rem}
-  .loopback{font-family:var(--sans);font-size:.82rem;color:var(--faint);text-align:center;margin-top:1.6rem}
-
-  /* 卡点 */
-  .pains{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.9rem}
-  .pain{border:1px solid var(--line);border-radius:.8rem;padding:1rem 1.2rem;background:rgba(255,255,255,.5)}
-  .pain b{font-size:1.05rem}
-  .pain span{display:block;font-family:var(--sans);font-size:.8rem;color:var(--ink-soft);margin-top:.25rem}
-
-  .foot{margin-top:4.5rem;padding-top:2rem;border-top:1px solid var(--line);
-        font-family:var(--sans);font-size:.82rem;color:var(--faint);text-align:center;line-height:2}
-
-  @media (max-width:560px){ .took .k{flex:0 0 100%} }
-</style>
 </head>
 <body>
+
+<title>问题沙龙</title>
+
+<style>
+  :root {
+    --paper: #f4f8f0;
+    --paper-raised: #fbfdf8;
+    --ink: #2c4430;
+    --ink-soft: #557056;
+    --ink-faint: #8ba488;
+    --indigo: #2f6f5e;
+    --indigo-soft: #7f9f77;
+    --indigo-wash: rgba(47, 111, 94, 0.07);
+    --cinnabar: #a55b33;
+    --cinnabar-wash: rgba(165, 91, 51, 0.07);
+    --rule: #d9e2d4;
+    --rule-soft: #e8efe3;
+
+    --serif: "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", "SimSun", Georgia, serif;
+    --sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --measure: 34rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0e1a15;
+      --paper-raised: #152521;
+      --ink: #dce9d8;
+      --ink-soft: #9db69a;
+      --ink-faint: #6f8a76;
+      --indigo: #8fc3a4;
+      --indigo-soft: #5c8168;
+      --indigo-wash: rgba(143, 195, 164, 0.09);
+      --cinnabar: #d99168;
+      --cinnabar-wash: rgba(217, 145, 104, 0.1);
+      --rule: #26352e;
+      --rule-soft: #1b2721;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper: #0e1a15;
+    --paper-raised: #152521;
+    --ink: #dce9d8;
+    --ink-soft: #9db69a;
+    --ink-faint: #6f8a76;
+    --indigo: #8fc3a4;
+    --indigo-soft: #5c8168;
+    --indigo-wash: rgba(143, 195, 164, 0.09);
+    --cinnabar: #d99168;
+    --cinnabar-wash: rgba(217, 145, 104, 0.1);
+    --rule: #26352e;
+    --rule-soft: #1b2721;
+  }
+
+  :root[data-theme="light"] {
+    --paper: #f4f8f0;
+    --paper-raised: #fbfdf8;
+    --ink: #2c4430;
+    --ink-soft: #557056;
+    --ink-faint: #8ba488;
+    --indigo: #2f6f5e;
+    --indigo-soft: #7f9f77;
+    --indigo-wash: rgba(47, 111, 94, 0.07);
+    --cinnabar: #a55b33;
+    --cinnabar-wash: rgba(165, 91, 51, 0.07);
+    --rule: #d9e2d4;
+    --rule-soft: #e8efe3;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+  }
+
+  p, li { max-width: var(--measure); }
+
+  a { color: var(--indigo); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ── eyebrow / labels ───────────────────────────── */
+  .label {
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+  }
+
+  /* ── hero ───────────────────────────────────────── */
+  .hero { padding: 5rem 0 3rem; display: flex; flex-direction: column; gap: 1.5rem; }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.4rem, 7vw, 3.6rem);
+    line-height: 1.12;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-wrap: balance;
+    margin: 0;
+  }
+  h1 .dim { color: var(--indigo-soft); }
+
+  .thesis {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+    max-width: 30rem;
+  }
+  .thesis strong { color: var(--ink); font-weight: 600; }
+
+  /* ── seating chart ──────────────────────────────── */
+  .table-scene {
+    position: relative;
+    margin: 2.5rem 0 1rem;
+    padding: 2.5rem 0 3.5rem;
+    display: grid;
+    place-items: center;
+  }
+  .table-oval {
+    position: relative;
+    width: min(23rem, 78vw);
+    aspect-ratio: 1.45 / 1;
+    border-radius: 50%;
+    border: 1px solid var(--indigo-soft);
+    background: var(--indigo-wash);
+    display: grid;
+    place-items: center;
+  }
+  .table-oval::after {
+    content: "";
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    border: 1px dashed var(--rule);
+  }
+  .table-q {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: var(--ink-faint);
+    text-align: center;
+    line-height: 1.6;
+    max-width: 11rem;
+    z-index: 1;
+  }
+  .seat {
+    position: absolute;
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--paper);
+    padding: 0.15rem 0.6rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    white-space: nowrap;
+    animation: seat-in 0.5s ease-out backwards;
+  }
+  .seat.n1 { top: -0.9rem; left: 50%; transform: translateX(-50%); animation-delay: 0.05s; }
+  .seat.n2 { top: 22%; left: -2.2rem; animation-delay: 0.15s; }
+  .seat.n3 { top: 22%; right: -2.2rem; animation-delay: 0.25s; }
+  .seat.n4 { bottom: 20%; left: -1.6rem; animation-delay: 0.35s; }
+  .seat.n5 { bottom: 20%; right: -1.6rem; animation-delay: 0.45s; }
+  .seat.n6 { bottom: -0.9rem; left: 50%; transform: translateX(-50%); animation-delay: 0.55s; }
+  .seat.you {
+    position: relative;
+    margin-top: 1.6rem;
+    border: 1px dashed var(--indigo);
+    color: var(--indigo);
+    background: transparent;
+    animation-delay: 0.75s;
+    font-size: 1rem;
+  }
+  @keyframes seat-in {
+    from { opacity: 0; transform: translateY(6px) var(--tx, ); }
+  }
+  .seat.n1, .seat.n6 { --tx: translateX(-50%); }
+  @media (prefers-reduced-motion: reduce) {
+    .seat { animation: none; }
+  }
+  .scene-cap {
+    margin-top: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+
+  /* ── sections ───────────────────────────────────── */
+  section { padding: 3.5rem 0; border-top: 1px solid var(--rule-soft); }
+  h2 {
+    font-family: var(--serif);
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin: 0.75rem 0 1.5rem;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 2rem 0 0.5rem;
+  }
+  p { margin: 0 0 1.1rem; }
+  em { font-style: normal; color: var(--indigo); }
+
+  /* ── compare ────────────────────────────────────── */
+  .compare {
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  @media (min-width: 40rem) { .compare { grid-template-columns: 1fr 1fr; } }
+  .compare > div { background: var(--paper-raised); padding: 1.25rem 1.35rem; }
+  .compare p { margin: 0.5rem 0 0; font-size: 0.95rem; color: var(--ink-soft); max-width: none; }
+  .compare .head { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); }
+  .compare .them .head { color: var(--ink-faint); }
+
+  /* ── transcript ─────────────────────────────────── */
+  .script { margin: 2rem 0; display: flex; flex-direction: column; gap: 1.4rem; }
+  .line { display: grid; gap: 0.15rem 1.25rem; }
+  @media (min-width: 44rem) {
+    .line { grid-template-columns: 6.5rem 1fr; }
+    .who { text-align: right; padding-top: 0.28rem; }
+  }
+  .who {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: var(--indigo);
+    white-space: nowrap;
+  }
+  .who .note { display: block; font-family: var(--sans); font-size: 0.7rem; color: var(--ink-faint); }
+  .says { max-width: var(--measure); }
+  .says p { margin: 0 0 0.6rem; }
+  .says p:last-child { margin-bottom: 0; }
+
+  .line.mei .who { color: var(--ink); }
+  .line.mei .says {
+    border-left: 2px solid var(--rule);
+    padding-left: 1rem;
+    font-family: var(--serif);
+    font-size: 1.05rem;
+  }
+
+  /* ── opposition bench: cinnabar ─────────────────── */
+  .bench {
+    margin: 2.5rem 0;
+    padding: 1.5rem 1.5rem 1.25rem;
+    background: var(--cinnabar-wash);
+    border: 1px solid var(--cinnabar);
+    border-radius: 3px;
+  }
+  .bench .label { color: var(--cinnabar); }
+  .bench .who { color: var(--cinnabar); }
+  .bench .seal {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: var(--cinnabar);
+    border-top: 1px solid var(--cinnabar);
+    padding-top: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  /* ── trace ──────────────────────────────────────── */
+  .trace-wrap { overflow-x: auto; margin: 1.5rem 0; }
+  pre.trace {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule-soft);
+    border-radius: 3px;
+    padding: 1.25rem;
+    margin: 0;
+    min-width: max-content;
+  }
+
+  /* ── rules list ─────────────────────────────────── */
+  .rules { list-style: none; padding: 0; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 1.5rem; }
+  .rules li { max-width: var(--measure); }
+  .rules .rule-name { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); }
+  .rules .rule-body { font-size: 0.95rem; color: var(--ink-soft); margin-top: 0.35rem; }
+
+  .incident {
+    margin: 2rem 0 0;
+    padding: 1.1rem 1.25rem;
+    border: 1px dashed var(--rule);
+    border-radius: 3px;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    background: var(--paper-raised);
+  }
+  .incident p { margin: 0.4rem 0 0; max-width: none; }
+
+  /* ── prompt block ───────────────────────────────── */
+  .prompt-card {
+    margin: 1.5rem 0;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    background: var(--paper-raised);
+    overflow: hidden;
+  }
+  .prompt-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0.75rem 0.6rem 1rem;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  button.copy {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    color: var(--paper-raised);
+    background: var(--ink);
+    border: 0;
+    border-radius: 2px;
+    padding: 0.4rem 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  button.copy:hover { opacity: 0.85; }
+  button.copy[data-done="1"] { background: var(--indigo); }
+  .prompt-body {
+    margin: 0;
+    padding: 1.1rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    color: var(--ink-soft);
+  }
+
+  /* ── creator note ───────────────────────────────── */
+  .creator-note {
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    line-height: 1.85;
+    color: var(--ink);
+    max-width: var(--measure);
+    margin-top: 1.5rem;
+  }
+  .creator-note p { margin: 0 0 1rem; max-width: var(--measure); }
+  .creator-note em { color: var(--indigo); }
+
+  /* ── paths ──────────────────────────────────────── */
+  .paths {
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  @media (min-width: 40rem) { .paths { grid-template-columns: 1fr 1fr; } }
+  .paths .path { background: var(--paper-raised); padding: 1.25rem 1.35rem; }
+  .path-head {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--indigo);
+    margin-bottom: 0.5rem;
+  }
+  .paths p { margin: 0; font-size: 0.92rem; color: var(--ink-soft); max-width: none; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    background: var(--indigo-wash);
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+
+  /* ── loop diagram ───────────────────────────────── */
+  .loop { margin: 2rem 0 0.5rem; }
+  .loop-step {
+    display: grid;
+    grid-template-columns: 1.9rem 1fr;
+    gap: 0 1rem;
+    position: relative;
+  }
+  .loop-step:not(:last-child) { padding-bottom: 1.4rem; }
+  .loop-step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: calc(0.95rem - 0.5px);
+    top: 1.9rem;
+    bottom: 0;
+    width: 1px;
+    background: var(--rule);
+  }
+  .loop-num {
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 50%;
+    border: 1px solid var(--indigo-soft);
+    color: var(--indigo);
+    background: var(--paper);
+    display: grid;
+    place-items: center;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    z-index: 1;
+  }
+  .loop-body { padding-top: 0.15rem; }
+  .loop-body .t { font-family: var(--serif); font-size: 1.08rem; color: var(--ink); line-height: 1.5; }
+  .loop-body .d { font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.15rem; max-width: var(--measure); }
+  .loop-back {
+    display: grid;
+    grid-template-columns: 1.9rem 1fr;
+    gap: 0 1rem;
+    align-items: center;
+    margin-top: 0.3rem;
+  }
+  .loop-back .arc { text-align: center; color: var(--cinnabar); font-size: 1.25rem; }
+  .loop-back .t { font-family: var(--serif); font-size: 1.05rem; color: var(--cinnabar); }
+  .loop-cap {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    margin: 1.6rem 0 0;
+    max-width: var(--measure);
+  }
+  .loop-cap strong { color: var(--ink); }
+  .loop-aside {
+    font-family: var(--serif);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    border-left: 2px solid var(--rule);
+    padding-left: 1rem;
+    margin: 1.4rem 0 0;
+    max-width: var(--measure);
+  }
+  .loop-aside strong { color: var(--ink); }
+
+  /* ── rule cards ─────────────────────────────────── */
+  .cards {
+    display: grid;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+  @media (min-width: 46rem) { .cards { grid-template-columns: repeat(3, 1fr); } }
+  .cards .card { background: var(--paper-raised); padding: 1.35rem 1.35rem 1.5rem; }
+  .card-n { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.15em; color: var(--cinnabar); }
+  .card-h { font-family: var(--serif); font-size: 1.12rem; color: var(--ink); margin: 0.4rem 0 0.5rem; line-height: 1.35; }
+  .card-b { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.7; }
+  .pull {
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--ink);
+    border-left: 2px solid var(--cinnabar);
+    padding-left: 1.1rem;
+    margin: 1.75rem 0 0;
+    max-width: 32rem;
+  }
+
+  /* ── collapsible ────────────────────────────────── */
+  details.more { margin: 0.25rem 0 0; }
+  details.more > summary {
+    cursor: pointer;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: var(--indigo);
+    list-style: none;
+    padding: 0.5rem 0;
+  }
+  details.more > summary::-webkit-details-marker { display: none; }
+  details.more > summary::before { content: "▸ "; }
+  details.more[open] > summary::before { content: "▾ "; }
+
+  /* ── guest chips ────────────────────────────────── */
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.25rem 0; }
+  .chips span {
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 0.3rem 0.85rem;
+  }
+  .chips span:last-child { color: var(--indigo); border-color: var(--indigo-soft); }
+  .chips-note { font-size: 0.95rem; line-height: 1.7; color: var(--ink-soft); max-width: var(--measure); margin: 0.5rem 0 0; }
+  .chips-note strong { color: var(--ink); }
+
+  /* ── footer ─────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--rule-soft);
+    padding: 3.5rem 0 0;
+  }
+  .closing {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    line-height: 1.75;
+    color: var(--ink);
+    max-width: 28rem;
+  }
+  .fine { font-size: 0.85rem; color: var(--ink-faint); margin-top: 2.5rem; }
+  .fine p { max-width: var(--measure); margin: 0 0 0.5rem; }
+
+  /* 回游园会顶栏(沿用旧版 salon.html 的样式) */
+  .gardenbar{display:flex;justify-content:space-between;align-items:center;
+    padding:1.5rem 0 2.2rem;font-family:var(--sans);max-width:var(--measure);margin:0 auto}
+  .gardenbar .back{font-size:.8rem;letter-spacing:.12em;color:var(--ink-soft);text-decoration:none;
+    border:1px solid var(--rule);border-radius:2rem;padding:.42em 1em;transition:.25s}
+  .gardenbar .back:hover{background:var(--indigo-wash);color:var(--ink)}
+  .gardenbar .brand{font-size:.78rem;letter-spacing:.3em;color:var(--ink-faint)}
+</style>
+
+<div class="gardenbar"><a class="back" href="index.html">← 回游园会</a><div class="brand">梅梅宇宙</div></div>
+
 <div class="wrap">
 
-  <div class="top">
-    <a class="back" href="index.html">← 回游园会</a>
-    <div class="brand">梅梅宇宙</div>
-  </div>
+  <header class="hero">
+    <div class="label">问题沙龙 · a salon of questions</div>
+    <h1>问题<span class="dim">沙龙</span></h1>
+    <p class="thesis">
+      不是跟哲学家聊天。是几个思想家围着<strong>你的</strong>真问题吵起来——
+      而分歧是他们之间的,不需要你允许才存在。你坐在中间。
+    </p>
 
-  <h1>问题沙龙</h1>
-  <p class="lead">带一个真问题来,让尼采和波伏瓦替你吵一架。吵完,你带走一句自己的话和一个最小行动——下次,来验收。</p>
-  <p class="belief">每个人都有权用自己喜欢的方式度过这一生。</p>
-
-  <section>
-    <div class="kicker">A ROUND</div>
-    <h2>一桌是怎么走的</h2>
-    <div class="loop">
-      <div class="step"><div class="n">01</div><div class="t">问题来</div><div class="d">带一个真困惑,认真的那种。</div></div>
-      <div class="step"><div class="n">02</div><div class="t">吵一架</div><div class="d">几个针锋相对的头脑分头开火。</div></div>
-      <div class="step"><div class="n">03</div><div class="t">接招</div><div class="d">反对席强制反驳,专戳软处。</div></div>
-      <div class="step"><div class="n">04</div><div class="t">带走</div><div class="d">一句自己的话 + 一个最小行动。</div></div>
-      <div class="step"><div class="n">05</div><div class="t">还账</div><div class="d">下次回来,验收你做了没。</div></div>
-      <div class="step"><div class="n">06</div><div class="t">再开</div><div class="d">带着新问题,再开一桌。</div></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="kicker">A REAL ROUND · 现场实录</div>
-    <h2>一桌,真的发生过</h2>
-    <div class="round">
-      <div class="ask">「我不想被任何东西夺舍,想永远保住自己。
-        <span>可社会、"自由"、甚至我爱的东西,好像都在烧我。」</span></div>
-
-      <div class="line"><span class="who">尼采</span> ——「问反了。别问怎么才能不被占有——问,什么配占有你。」</div>
-      <div class="line"><span class="who">波伏瓦</span> ——「还有,'保住'就错了。主体性是个动词,你没法保住一个动词。」</div>
-      <div class="line"><span class="who">庄子</span> ——「你是火啊。烧得掉的,本来就不算你。你抓这么紧,手先累死。」</div>
-      <div class="line"><span class="who">尼采</span> <span class="cue">(冷笑)</span>「你累的,是站在火边那个监工。」</div>
-      <div class="line"><span class="who">韩炳哲</span> ——「那监工早搬进你身体里了,用你的声音,说关心你的话。它只问'值不值',从不问'暖不暖'。」</div>
-      <div class="line"><span class="who">福柯</span> <span class="cue">(慢慢地)</span>「那张验收单……到底是谁写的?」</div>
-      <div class="line her"><span class="who">她</span> <span class="cue">(突然坐直)</span>「一边烧、一边验收火——这不就是我每天在干的事?」</div>
-
-      <div class="took">
-        <p style="color:var(--ink-soft);font-size:.95rem;margin-bottom:1rem">终局,他们让她给那个监工<b>改了岗</b>——烧的时候只留报警器,验收挪到收工再做。</p>
-        <div class="row"><div class="k">带走的一句</div><div class="v">我该像水,攥自己攥得太紧了,该松一点。</div></div>
-        <div class="row"><div class="k">最小行动</div><div class="v">这周做事先别评判自己,把"值不值"留到收工再问。</div></div>
+    <div class="table-scene">
+      <div class="table-oval">
+        <span class="seat n1">福柯</span>
+        <span class="seat n2">尼采</span>
+        <span class="seat n3">荣格</span>
+        <span class="seat n4">波伏瓦</span>
+        <span class="seat n5">塔勒布</span>
+        <span class="seat n6">庄子</span>
+        <p class="table-q">我为什么<br>总是先付出?</p>
       </div>
-      <div class="loopback">下次她回来,我们验收她做了没。 ↺</div>
+      <span class="seat you">你</span>
+      <p class="scene-cap">你可以随时打断:「等等,我想听波伏瓦继续说。」</p>
+    </div>
+  </header>
+
+  <section>
+    <div class="label">它怎么运转</div>
+    <h2>不是一次问答。是一个会往前长的循环。</h2>
+
+    <div class="loop">
+      <div class="loop-step">
+        <div class="loop-num">1</div>
+        <div class="loop-body">
+          <div class="t">你带一个真问题来</div>
+          <div class="d">哲学、心理、投资,任何让你卡住的事。我最早问的是哲学,后来更多是"这个决定到底怎么做"。</div>
+        </div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">2</div>
+        <div class="loop-body">
+          <div class="t">对口的思想家上桌,互相吵</div>
+          <div class="d">不是排队回答——他们彼此不服。而且每场都有人<strong>真打你</strong>,不许一路夸。</div>
+        </div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">3</div>
+        <div class="loop-body">
+          <div class="t">你接招</div>
+          <div class="d">立论、被打服、或者反杀。你怎么接,比谁对更重要。</div>
+        </div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">4</div>
+        <div class="loop-body">
+          <div class="t">收桌,你只带走一件</div>
+          <div class="d">一句你亲口说的「你的一页」,加一件要去验的事——<strong>读一章书,或者去做一个动作</strong>。</div>
+        </div>
+      </div>
+      <div class="loop-step">
+        <div class="loop-num">5</div>
+        <div class="loop-body">
+          <div class="t">过些天,回来还账</div>
+          <div class="d">它会问你(或你问自己):那件事,后来怎么样了?那一页,现在变了吗?</div>
+        </div>
+      </div>
+      <div class="loop-back">
+        <div class="arc">↺</div>
+        <div class="t">带着这次的变化,再开一场</div>
+      </div>
+    </div>
+
+    <p class="loop-aside">也不是每场都得有答案。最疼的那一枪,你可以<strong>不当场答</strong>——带走,揣上几个星期慢慢摸。它不逼你想通。</p>
+
+    <p class="loop-cap">所以它不是读物,是<strong>一套长期的思考系统</strong>。你不断把喜欢的人请上桌,每转一圈,比上一圈清楚一点——终有一天,桌上会多一把写着你名字的椅子。</p>
+  </section>
+
+  <section>
+    <div class="label">它跟"跟 AI 聊哲学"有什么不同</div>
+    <h2>普通产品给你四个答案。这里给你一场争吵。</h2>
+
+    <div class="compare">
+      <div class="them">
+        <div class="head">你问:我为什么总想成为某种人?</div>
+        <p>尼采:力量意志。<br>荣格:阴影。<br>福柯:主体。<br>—— 结束。</p>
+      </div>
+      <div class="us">
+        <div class="head">这里</div>
+        <p>福柯先拆你的问题:"某种人"是谁定义的?荣格说他绕开了童年;波伏瓦问这套标准是不是被教出来的;尼采冷笑:你们全在替她心疼。<br>然后他们开始互相不服。你站在中间。</p>
+      </div>
+    </div>
+
+    <p>还有一件事它跟别的 AI 不一样:<em>它被设计成不许讨好你。</em></p>
+    <p>
+      AI 默认会顺着人——这是它的重力。所以这套协议里有一道关不掉的闸:收桌前必须自查"今晚有没有人真的打过我的立论",没有,就不许收桌。
+    </p>
+  </section>
+
+  <section>
+    <div class="label">谁会上桌</div>
+    <h2>有点像一场奇葩说——只是辩手是尼采,题目是你的人生。</h2>
+    <p>而且辩手不限于哲学家。谁能帮你把这个问题看得更清楚,谁就上桌:</p>
+    <div class="chips">
+      <span>哲学家</span><span>心理学家</span><span>投资人</span><span>诗人</span><span>认知科学家</span><span>建筑师</span><span>策展人</span><span>画家</span><span>医生</span><span>护士</span><span>行为艺术家</span><span>…… 你说了算</span>
+    </div>
+    <p class="chips-note">同一个问题,让真正吵过架、立场真对立的人上桌互相顶——比如"临终的人后悔什么",可以同时请来一个斯多葛哲学家、一个研究货币的社会学家、和一个临终关怀护士。桌上甚至能放一把<strong>诗人椅</strong>:坐上去的人不参加辩论,只负责换一个你没想到的视角——然后所有人都会为他停下来。</p>
+  </section>
+
+  <section>
+    <div class="label">实录节选 · 第五场</div>
+    <h2>「我什么都懂一点,但每个理念都不通。这是病吗?」</h2>
+    <p>
+      提问的人有个自我诊断:哲学、心理学的观念不啃大部头,有用就拿来用,结果整个人很杂;遇到某方面很通的人,会怯,不敢瞎说。
+    </p>
+    <p>桌上请了五位:詹姆斯(实用主义创始人)、伯林(狐狸与刺猬)、伽达默尔(解释学),以及在这个问题上真吵过一架的两个南宋人——朱熹和陆九渊。</p>
+
+    <div class="script">
+      <div class="line">
+        <div class="who">陆九渊<span class="note">先声夺人</span></div>
+        <div class="says">
+          <p>你先把腰挺起来。我八百年前说过一句被骂到今天的话:<strong>学苟知本,六经皆我注脚。</strong>书是为人服务的,不是人为书服务的。你遇到"通"的人就怯?我问你:他通的是他的书,你通的是你的命——凭什么他的辖区比你的大?</p>
+        </div>
+      </div>
+
+      <div class="line">
+        <div class="who">朱熹<span class="note">不急,先倒茶</span></div>
+        <div class="says">
+          <p>象山兄这话八百年了还是这么痛快,也还是这么危险。我不反对拿来用——我反对<strong>没验过货就入库</strong>。概念是从一整套结构里长出来的,你只掰下最上面那朵花,插在自己瓶里。花没有根,<strong>你就不知道它什么时候不适用</strong>。用错概念的人不会收到报错,它只会悄悄把你带偏。</p>
+          <p>至于你见"通"人则怯——我说句狠的:<strong>那份怯是诚实的,是账单。</strong>你心里其实知道,自己借来的东西,没有一件经得起追问三层。</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bench">
+      <div class="label">反对席 · 每场强制开</div>
+      <div class="script" style="margin-top:1.25rem">
+        <div class="line">
+          <div class="who">詹姆斯<span class="note">笑容收起来</span></div>
+          <div class="says">
+            <p>按我的标准,<strong>你还不配叫实用主义者——因为你从不验收。</strong>我查账:你说的"有用",是"用了之后行动真的变了",还是只是<strong>听到它那一刻,你心里舒服了</strong>?这是两种完全不同的东西。后者是收藏顺畅感——把漂亮概念摆进柜子,每次拿出来把自己解释一遍,解释完什么也没变。</p>
+            <p>没有验收的拿来主义,不是实用,是杂货铺进货:什么都进,从不盘点。你当然杂,你当然虚。</p>
+          </div>
+        </div>
+      </div>
+      <div class="seal">刀落在她当晚的原话上,不是稻草人。接下来看她怎么接。</div>
+    </div>
+
+    <div class="script">
+      <div class="line mei">
+        <div class="who">她<span class="note">接枪 · 反杀</span></div>
+        <div class="says">
+          <p>我的第二次存在主义危机,是靠读存在主义解除的。当时我读出来的是:人生要收集更多的体验。于是我看了很多展,旅了很多游,做了很多手工。</p>
+          <p>三年后第三次危机,我再去看存在主义,发现它讲的根本不是消费型的——它讲的是人要通过行动去创造意义。<strong>是从你自己出发的那种创造,而不仅仅是消费。</strong></p>
+        </div>
+      </div>
+
+      <div class="line">
+        <div class="who">詹姆斯<span class="note">合上账本</span></div>
+        <div class="says">
+          <p>我要当庭宣布:她刚才交上来的,正是我要的验收记录,而且是范本级的。观念、行动、后果、修正——这是完整的一轮实用主义循环,比我课堂上教的还标准。我收回"从不验收"的指控……<strong>但只收回一半。</strong>因为她的两次验收,都是<strong>危机替她发起的</strong>。危机是最贵的审计师,收费是整段整段的痛苦。</p>
+        </div>
+      </div>
+
+    </div>
+
+    <details class="more">
+      <summary>接着还有三个人轮流打她 · 展开</summary>
+      <div class="script" style="margin-top:1rem">
+        <div class="line">
+          <div class="who">波伏瓦<span class="note">走过来</span></div>
+          <div class="says">
+            <p>但我要修正你最后那句,这很重要。你说"是不是经历得够多才能理解得更深"——不对,差一个字。<strong>不是经历多,是你拿它去行动过。</strong>三年里光阴在谁身上都会流,多数人流完还是原来的理解。</p>
+            <p><strong>深度不是岁月的利息,是行动的战利品。</strong></p>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="who">伽达默尔<span class="note">自己搬椅子进来</span></div>
+          <div class="says">
+            <p>"第一遍没读通"不是你的错。<strong>理解从来不是把书里的固定意思挖出来,而是你带着你的问题去,书回答你问的那个问题。</strong>你没有问题的地方,书对你是哑的。</p>
+            <p>所以你怯的那些"通"人,他们的"通"也只是他们的问题所能打开的那一部分。<strong>没有人站在书的全部里面。</strong></p>
+          </div>
+        </div>
+
+        <div class="line">
+          <div class="who">朱熹<span class="note">刀还没收</span></div>
+          <div class="says">
+            <p>都夸完了?那这刀还是我来下。三年里经历过危机的人千千万,几个人理解变深了?变量不在"经历"——在你做了一件多数人不做的事:<strong>你回头了。</strong></p>
+            <p>所以"等我经历够了再读"是一张永远等在门外的许可证。<strong>深,是重读出来的,而重读需要你先有第一遍。</strong></p>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <div class="label">这个问题那晚走过的路</div>
+    <div class="trace-wrap">
+<pre class="trace">杂而不通,是病吗?
+  → 陆九渊撑腰:六经皆我注脚,他通他的书、你通你的命
+  → 朱熹拆:没验货就入库,概念无根不知何时失效;怯 = 账单
+  → 反对席:詹姆斯「你从不验收,是收藏顺畅感」+ 朱熹「珠子无线」
+  → 伯林救场:狐狸不是失败的刺猬;你考他你的命,他也怯
+  → 她反杀:存在主义三次危机 = 一份真验收记录
+  → 波伏瓦:深度不是岁月的利息,是行动的战利品
+  → 伽达默尔:书只回答你带来的问题
+  → 朱熹再下刀:功臣不是经历,是回头重读
+  → 终局:杂不是缺点,是方式;专也有它的缺陷</pre>
+    </div>
+
+    <div class="script">
+      <div class="line mei">
+        <div class="who">她的一页<span class="note">收桌 · 逐字</span></div>
+        <div class="says">
+          <p>「原来杂而不通,它并不是缺点,它只是一种方式而已。真的很专业,也有自己的缺陷。所以我只要在这个领域扬长避短就好了,不要拿它当借口就好了。」</p>
+        </div>
+      </div>
     </div>
   </section>
 
   <section>
-    <div class="kicker">WHY</div>
-    <h2>四个卡点</h2>
-    <div class="pains">
-      <div class="pain"><b>信息过载</b><span>看得多,想不动</span></div>
-      <div class="pain"><b>决策瘫痪</b><span>都有理,选不出</span></div>
-      <div class="pain"><b>孤独思考</b><span>没人陪你吵</span></div>
-      <div class="pain"><b>没有闭环</b><span>想了就散了</span></div>
+    <div class="label">协议</div>
+    <h2>三条不许</h2>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-n">规矩一</div>
+        <div class="card-h">每场都得有人真打你</div>
+        <div class="card-b">不等你喊。反对席每场强制开,打真处、不打稻草人。桌子一路夸你,这一场就不合格。</div>
+      </div>
+      <div class="card">
+        <div class="card-n">规矩二</div>
+        <div class="card-h">收桌留下「你的一页」</div>
+        <div class="card-b">口述三句你自己的话,逐字存档。存档是 AI 写的;这一页才是你的学习。</div>
+      </div>
+      <div class="card">
+        <div class="card-n">规矩三</div>
+        <div class="card-h">一场只带走一件事</div>
+        <div class="card-b">最真的缺口,换成一件带走的东西——一个待发酵问题、一次可观察动作,<strong>或者一段原典</strong>。只带一件,不许囤。</div>
+      </div>
+    </div>
+
+    <p class="pull">"哪怕错误的反驳也要有——人被 AI 取悦太久了,我不想比它还蠢。"</p>
+  </section>
+
+  <section>
+    <div class="label">我是怎么用的</div>
+    <h2>它不是用来查哲学的。是用来审我自己。</h2>
+
+    <div class="creator-note">
+      <p>我不拿它问"尼采说过什么"。我拿它审我自己正在做的决定、正在绕的困惑。</p>
+      <p>有一场,我把一个真实的选择放上桌。反对席一句话戳穿我:<em>你把它谈得头头是道,却一分钱、一步路都没动。</em>我全认了。四天后,我第一次真的动了手——不是被说服的,是那句话让我没法再假装自己在思考。</p>
+      <p>还有一场,我问了一个憋很久的问题:我什么都懂一点,但每个理念都不通,这是不是病?打到最后,我最怕的那个东西——<em>遇到某方面很厉害的人就不敢开口</em>——被我自己改装成了一件工具:被问到说不出话的地方,不再是"我不行",而是"这里有货,是我该学的入口"。</p>
+      <p>它对我最大的用,不是给答案。是逼我把想法当众放上手术台,然后看我怎么接招。<strong>我怎么接招,比谁说得对更重要。</strong></p>
     </div>
   </section>
 
-  <div class="foot">
-    你卡在什么上了?<br>
-    到目前为止,这些桌都是开给我自己的。
-  </div>
+  <section>
+    <div class="label">自己开一场</div>
+    <h2>两种版本,都不花钱,也不用任何 key。</h2>
+    <p>
+      带一个你<strong>真的</strong>困扰或着迷的问题来——假问题会得到漂亮而无用的一场。选一条你顺手的路:
+    </p>
+
+    <div class="paths">
+      <div class="path">
+        <div class="path-head">用 Claude Code / Codex 这类 AI</div>
+        <p>装 skill 版——完整的循环。它替你记住整套规矩,还会隔些天回来问你:那件事怎么样了?从我的 GitHub skill 库取 <code>roundtable</code>,放进去,说「开桌」。</p>
+      </div>
+      <div class="path">
+        <div class="path-head">只用 ChatGPT / Claude / 豆包 App</div>
+        <p>用提示词版——精简的循环。复制下面这段,粘进去,说「开桌」。它不会自己回来找你,下次想续上,开桌前让它带你还一次账。</p>
+      </div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-bar">
+        <span class="label">开桌提示词</span>
+        <button class="copy" id="copyBtn" type="button">复制</button>
+      </div>
+      <pre class="prompt-body" id="promptText">你是「问题沙龙」的主持人。我会给你一个我真的在困扰或着迷的问题。
+
+规则:
+1. 按问题配嘉宾,不限于哲学家,谁能把这个问题看得更清楚就请谁(心理学家、投资人、诗人、科学家、医生、甚至行为艺术家都行)。默认用**双赛制**:日常小桌 3 人,想持续来回说、不想被信息淹没时用;特殊大桌 5-6 人,只在三种情况开——问题本来就有历史战场需要请齐两派、你主动要更多人、或聊出新病灶需要临时加椅子。大桌加人一次只加 1 个,新人要说明自己是被哪句话叫来的。人选优先找在这个问题上真吵过架、立场真对立的人,不凑明星阵容。
+2. 不强制每人每轮都发言——候场的人不用开口,只有被点名或真被一句话惹到才入场。开口的人必须回应上一个人,不许各说各话;他们要互相打断、互相不服。每位按其真实传统出招,用他自己的真实概念,不是同一个 AI 换几个名字说车轱辘话。
+3. 我随时可以打断、点名(「让 X 回应 Y」)、让两个人 PK、临时请新人入座。
+4. 【强制】每场必须有一轮真的反对我:等我立论之后,思想家要打我立论的真处,不是稻草人。我还手之后不许立刻软化。你一路夸我 = 这场不合格。
+5. 收桌前先自查:今晚有没有人真的打过我的立论?没有,就退回去补上,不许收桌。
+6. 收桌时问我三个问题,把我的原话逐字记下来,一个字不许改:我现在怎么看这个问题?哪句话是我的了?还有什么悬着?
+7. 最后根据这场最真的缺口,只给我留一件:一个待发酵问题、一个可观察小动作,或那个人的原典一章(不超过30页)。三选一,不许囤。
+8. 记住这是一个循环:下次遇到相关问题时,先轻回访——上次带走的那件事变了吗?无关旧账不阻塞新问题。
+
+现在开桌。我的问题是:</pre>
+    </div>
+
+    <p style="font-size:0.9rem;color:var(--ink-faint)">
+      跑完一场,把那一页存下来。下次开桌前先念给自己听:这页哪里变了?——安静的功课,挂在"开桌"这个你本来就想做的事上,就不需要自律。
+    </p>
+  </section>
+
+  <footer>
+    <div class="label">远景</div>
+    <p class="closing">
+      几十位思想家 × 几十个永恒问题,长成一张你自己的思想地图。人和书,只是这些问题之间的连接点。
+      <br><br>
+      有一天别人来问一个问题,桌上会多一把椅子——<br>上面写着你的名字。
+    </p>
+
+    <div class="fine">
+      <p>思想家的发言是 AI 演绎,不是史料。要摸到真的,得自己去读、去做——这正是每场那件作业存在的原因。</p>
+      <p>主持人不给投资、医疗、法律的专业建议,只给思考工具。真决策请找持牌的人。</p>
+    </div>
+  </footer>
 
 </div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('copyBtn');
+    var src = document.getElementById('promptText');
+    btn.addEventListener('click', function () {
+      var text = src.textContent;
+      var done = function () {
+        btn.textContent = '已复制';
+        btn.dataset.done = '1';
+        setTimeout(function () {
+          btn.textContent = '复制';
+          btn.dataset.done = '0';
+        }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else {
+        fallback();
+      }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+  })();
+</script>
+
 </body>
 </html>

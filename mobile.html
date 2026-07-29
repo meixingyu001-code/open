@@ -69,8 +69,9 @@
   .s2{top:35%;left:22%;animation-delay:1.2s}
   .s4{top:38%;left:75%;animation-delay:1.8s}.s4 .label{font-family:var(--sans);letter-spacing:.06em}
   .s5{top:69%;left:30%;animation-delay:.9s}
-  .s6{top:76%;left:72%;animation-delay:2.1s}.s6 .label{font-size:.86rem}
-  .s7{top:60%;left:55%;animation-delay:1.5s}.s7 .label{font-size:1.08rem;letter-spacing:.2em;font-weight:500}
+  .s6{top:76%;left:72%;animation-delay:2.1s}
+  /* 只有「先了解我」作为入口锚点略大一号,其余星球统一走 .star 的字号 */
+  .s7{top:60%;left:55%;animation-delay:1.5s}.s7 .label{font-size:.92rem;letter-spacing:.18em;font-weight:500}
   .mmu[data-theme="night"] .s7 .label{color:#f3f7dc}
 
   .garden-intro{position:absolute;z-index:3;top:14%;left:50%;width:72vw;transform:translate(-50%,-50%);text-align:center;
@@ -84,6 +85,17 @@
     background:rgba(246,250,242,.34);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px)}
   .mmu[data-theme="night"] .foot{background:rgba(7,23,18,.25)}
   .desktop-hatch{display:block;margin-top:.5rem;font-size:.64rem;color:var(--faint);text-decoration:underline}
+
+  /* 新人引导:下一个推荐的星球轻轻呼吸发光 + 底部一行小字。全部逛过就自动消失。 */
+  .star.guide-next::after{content:"";position:absolute;inset:-8%;border-radius:999px;z-index:-1;pointer-events:none;
+    border:1px solid rgba(255,206,92,.7);box-shadow:0 0 18px 4px rgba(255,206,92,.34);
+    animation:guidePulse 2.6s ease-in-out infinite}
+  @keyframes guidePulse{0%,100%{opacity:.3;transform:scale(.96)}50%{opacity:1;transform:scale(1.07)}}
+  .guide-hint{position:absolute;z-index:4;bottom:4.6rem;left:50%;transform:translateX(-50%);white-space:nowrap;
+    font-family:var(--sans);font-size:.68rem;letter-spacing:.08em;color:var(--ink-soft);padding:.38rem .8rem;border-radius:99px;
+    background:rgba(246,250,242,.5);border:1px solid rgba(255,255,255,.28);backdrop-filter:blur(6px)}
+  .mmu[data-theme="night"] .guide-hint{background:rgba(7,23,18,.34)}
+  @media (prefers-reduced-motion:reduce){.star.guide-next::after{animation:none;opacity:.85}}
 
   /* Bottom sheet:替代桌面版的浮动窗口 */
   .sheet-backdrop{position:fixed;inset:0;z-index:29;background:rgba(10,20,14,.32);
@@ -124,7 +136,14 @@
   .mmu[data-theme="night"] .chatbar input{background:rgba(255,255,255,.08)}
   .chatbar button{font-family:var(--sans);font-size:.85rem;color:var(--ink);background:rgba(127,159,119,.22);border:1px solid var(--win-line);border-radius:2rem;padding:.55em 1.05em}
   .chatbar button:disabled{opacity:.5}
-  .bubble.typing{opacity:.6;font-style:italic}
+  /* 免费模型有时要等好几秒。动起来的等待比一句静止的"正在想…"体感短很多。 */
+  .bubble.typing{opacity:.75;font-style:italic;display:flex;align-items:center;gap:.5rem}
+  .bubble.typing .dots{display:inline-flex;gap:3px}
+  .bubble.typing .dots i{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.35;
+    animation:twinDot 1.25s ease-in-out infinite}
+  .bubble.typing .dots i:nth-child(2){animation-delay:.18s}
+  .bubble.typing .dots i:nth-child(3){animation-delay:.36s}
+  @keyframes twinDot{0%,100%{opacity:.25;transform:translateY(0)}45%{opacity:.95;transform:translateY(-3px)}}
   .tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.75rem}.tag{font-family:var(--sans);font-size:.68rem;color:var(--ink-soft);border:1px solid var(--win-line);border-radius:99px;padding:.2rem .5rem}
   .sheet .go{display:inline-block;margin-top:1rem;font-family:var(--sans);font-size:.85rem;letter-spacing:.06em;
     color:var(--ink);text-decoration:none;border:1px solid var(--win-line);border-radius:2rem;padding:.5em 1.2em}
@@ -157,6 +176,8 @@
     <a class="star s7" data-app="intro" href="#"><span class="label">先了解我</span></a>
   </div>
 
+  <p class="guide-hint" id="guideHint" hidden></p>
+
   <p class="foot" id="foot">把我带回自己身上。<a class="desktop-hatch" href="index.html?desktop=1">查看电脑版</a></p>
 </div>
 
@@ -173,7 +194,11 @@
       sheet=document.getElementById('sheet'), backdrop=document.getElementById('backdrop'),
       sheetTitle=document.getElementById('sheetTitle'), sheetBody=document.getElementById('sheetBody'),
       sheetClose=document.getElementById('sheetClose'), sheetHandle=document.getElementById('sheetHandle'),
-      sheetHead=document.querySelector('.sheet-head');
+      sheetHead=document.querySelector('.sheet-head'), guideHint=document.getElementById('guideHint');
+
+  // 新人建议路线:先认识人 → 聊两句 → 想往深里看再进 Wiki/沙龙 → 最后才是 Life OS
+  var GUIDE=['intro','twin','wiki','salon','life'];
+  var GUIDE_LABEL={intro:'先了解我',twin:'和梅梅聊天',wiki:'人生 Wiki',salon:'问题沙龙',life:'Life OS'};
 
   var CORE=['intro','wiki','salon','twin','life'], visited=[];
   try{ visited=JSON.parse(localStorage.getItem('mmu-visited-v1')||'[]'); }catch(e){ visited=[]; }
@@ -187,6 +212,20 @@
     var unlocked=CORE.every(function(k){return visited.indexOf(k)>-1;}), next=sky.querySelector('.s6');
     next.classList.toggle('unlocked',unlocked);
     next.setAttribute('aria-disabled',unlocked?'false':'true');
+    updateGuide();
+  }
+  // 引导:把光标停在建议路线上第一个还没点过的星球
+  function updateGuide(){
+    sky.querySelectorAll('.star').forEach(function(s){ s.classList.remove('guide-next'); });
+    var nextKey=null;
+    for(var i=0;i<GUIDE.length;i++){ if(visited.indexOf(GUIDE[i])<0){ nextKey=GUIDE[i]; break; } }
+    if(!nextKey){ guideHint.hidden=true; return; }   // 都逛过了就不再打扰
+    var el=sky.querySelector('[data-app="'+nextKey+'"]');
+    if(el) el.classList.add('guide-next');
+    guideHint.hidden=false;
+    guideHint.textContent=visited.length===0
+      ? '没头绪的话，从「'+GUIDE_LABEL[nextKey]+'」开始'
+      : '接下来可以看「'+GUIDE_LABEL[nextKey]+'」';
   }
   function markVisited(key){
     if(CORE.indexOf(key)>-1&&visited.indexOf(key)<0){visited.push(key);saveVisited();updateGarden();}
@@ -253,15 +292,20 @@
       add('user',text); history.push({role:'user',content:text});
       inp.value=''; inp.focus(); btn.disabled=true;
       if(!TWIN_API){ add('assistant','(分身马上接上线,先喝口水~)'); btn.disabled=false; return; }
-      var typing=add('assistant','数字梅梅正在想…'); typing.classList.add('typing');
+      var typing=add('assistant','数字梅梅正在想'); typing.classList.add('typing');
+      typing.innerHTML='数字梅梅正在想<span class="dots"><i></i><i></i><i></i></span>';
+      // 等久了换句话,让人知道还在跑,不是卡死了
+      var waitTimer=setTimeout(function(){
+        typing.innerHTML='还在想，稍等一下<span class="dots"><i></i><i></i><i></i></span>';
+      },6000);
       fetch(TWIN_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})})
         .then(function(r){return r.json();})
         .then(function(d){
-          typing.remove();
+          clearTimeout(waitTimer); typing.remove();
           var reply=d.reply||d.error||'……(卡了一下,再说一次?)';
           add('assistant',reply); history.push({role:'assistant',content:reply});
         })
-        .catch(function(){ typing.remove(); add('assistant','(我这边断线了,待会儿再聊?)'); })
+        .catch(function(){ clearTimeout(waitTimer); typing.remove(); add('assistant','(我这边断线了,待会儿再聊?)'); })
         .finally(function(){ btn.disabled=false; });
     });
   }

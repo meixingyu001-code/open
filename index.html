@@ -4,6 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>梅梅宇宙 · Life OS</title>
+<script>
+// 手机访客自动跳去 mobile.html(独立的手机版页面,bottom sheet 交互)。
+// 桌面访客不受影响。?desktop=1 是逃生 hatch:mobile.html 里"查看电脑版"点过来会带这个参数,
+// 命中后写 localStorage,以后这台设备/浏览器再访问就不会被跳走。
+(function(){
+  try{
+    if(location.search.indexOf('desktop=1')>-1){
+      localStorage.setItem('mmu-force-desktop','1'); return;
+    }
+    if(localStorage.getItem('mmu-force-desktop')==='1') return;
+    var ua=navigator.userAgent||'';
+    var uaMobile=/Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(ua);
+    var narrow=Math.min(window.innerWidth, window.screen.width)<=760;
+    if(uaMobile && narrow) location.replace('mobile.html');
+  }catch(e){}
+})();
+</script>
 <style>
   /* =========================================================
      梅梅宇宙 · 生态画卷 v5 —— 一屏 · 横屏 · 入口散布 · 开窗不跳走
@@ -226,7 +243,7 @@
 
   <div class="walker" id="walker" aria-hidden="true"><img class="walker-sprite" id="walker-sprite" src="assets/meimei-walk-4.webp" alt=""></div>
 
-  <p class="foot" id="foot">把我带回自己身上。</p>
+  <p class="foot" id="foot">把我带回自己身上。<a href="mobile.html" style="margin-left:.6em;text-decoration:underline;color:inherit;opacity:.6">手机版</a></p>
 </div>
 
 <script>

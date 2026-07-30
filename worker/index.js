@@ -130,6 +130,24 @@ function looksLikeLeakedReasoning(text) {
   return false;
 }
 
+// 编造公开出处:2026-08 复测发现 system prompt 里已经写了"出处纪律"(不编文章名/期数),
+// 但模型仍有概率一边说"没有具体标题"一边编出一个听起来真实的标题。指令挡不住,补一道代码层检测。
+// 逻辑:抓回复里所有《...》「...」引号片段,如果它紧邻"一篇/这篇/专门讲/第几期/公众号里"这类
+// 归因某个具体来源的措辞,又没有真实出现在 system prompt(含固定语料+本轮检索原文)里,
+// 基本可以判定是编的——因为对外语料包本身完全不含具体文章/期数标题,任何真实标题只可能来自检索原文。
+function looksLikeFabricatedSource(text, systemContent) {
+  if (!text) return false;
+  const SOURCE_CUE = /(一篇|这篇|那篇|专门讲|叫做|标题是|题目是|公众号里|博客里|播客里|第[一二三四五六七八九十\d]+期|哪篇文章|关于)/;
+  const quotes = text.match(/[《「][^》」]{2,30}[》」]/g) || [];
+  for (const q of quotes) {
+    const idx = text.indexOf(q);
+    const context = text.slice(Math.max(0, idx - 15), idx + q.length + 6);
+    const inner = q.slice(1, -1);
+    if (SOURCE_CUE.test(context) && !systemContent.includes(inner)) return true;
+  }
+  return false;
+}
+
 // ---- 大脑调用:优先 OpenRouter 上的免费模型,没配 key 或输出异常就退回 Cloudflare Workers AI ----
 async function callBrain(env, messages) {
   if (env.OPENROUTER_API_KEY) {
@@ -164,8 +182,11 @@ async function callBrain(env, messages) {
       }
       const data = await resp.json();
       const text = data?.choices?.[0]?.message?.content;
-      if (text && !looksLikeLeakedReasoning(text.trim())) return text.toString().trim();
-      throw new Error("OpenRouter 返回为空或疑似泄露内部思考");
+      const systemContent = messages[0] && messages[0].role === "system" ? messages[0].content : "";
+      if (text && !looksLikeLeakedReasoning(text.trim()) && !looksLikeFabricatedSource(text.trim(), systemContent)) {
+        return text.toString().trim();
+      }
+      throw new Error("OpenRouter 返回为空、疑似泄露内部思考或编造了公开出处");
     } catch (err) {
       // OpenRouter 挂了/限流了/输出异常,退回 Cloudflare 兜底
       return await callFallback(env, messages);
@@ -183,9 +204,10 @@ async function callFallback(env, messages) {
       new Promise((_, rej) => setTimeout(() => rej(new Error("fallback timeout")), FALLBACK_TIMEOUT_MS)),
     ]);
     const text = ((out && (out.response || out.result)) || "").toString().trim();
-    if (text && !looksLikeLeakedReasoning(text)) return text;
+    const systemContent = messages[0] && messages[0].role === "system" ? messages[0].content : "";
+    if (text && !looksLikeLeakedReasoning(text) && !looksLikeFabricatedSource(text, systemContent)) return text;
   } catch (err) {
-    // 超时或调用失败,落到下面的固定文案
+    // 超时、调用失败或编造出处,落到下面的固定文案
   }
   return "……(今天有点卡壳,要不换句话再问我一次?)";
 }

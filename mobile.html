@@ -74,10 +74,14 @@
   .s7{top:60%;left:55%;animation-delay:1.5s}.s7 .label{font-size:.92rem;letter-spacing:.18em;font-weight:500}
   .mmu[data-theme="night"] .s7 .label{color:#f3f7dc}
 
-  .garden-intro{position:absolute;z-index:3;top:14%;left:50%;width:72vw;transform:translate(-50%,-50%);text-align:center;
+  .garden-intro{position:absolute;z-index:3;top:11%;left:50%;width:80vw;transform:translate(-50%,-50%);text-align:center;
     color:rgba(37,69,43,.78);text-shadow:0 1px 2px rgba(255,255,244,.98),0 0 12px rgba(255,255,225,.86)}
   .garden-intro strong{display:block;margin-bottom:.35rem;font-size:.9rem;font-weight:400;letter-spacing:.1em}
   .garden-intro span{display:block;font-family:var(--sans);font-size:.64rem;line-height:1.6;letter-spacing:.03em}
+  /* 建议游览顺序:常驻可见,和上面的欢迎语拉开一点距离 */
+  /* 手机上这行会折成两行,压紧行距并上移 intro,免得压到「人生 Wiki」那颗星 */
+  .garden-intro .tour-order{margin-top:.6rem;padding-top:.5rem;font-size:.58rem;line-height:1.5;letter-spacing:.02em;opacity:.82;
+    border-top:1px solid rgba(80,110,80,.18);display:inline-block}
   .mmu[data-theme="night"] .garden-intro{color:rgba(225,238,215,.82);text-shadow:0 1px 8px rgba(0,0,0,.9),0 0 20px rgba(164,205,139,.35)}
 
   .foot{position:absolute;z-index:3;bottom:.9rem;left:50%;transform:translateX(-50%);white-space:nowrap;
@@ -157,7 +161,6 @@
   <div class="bg bg-night"></div>
 
   <header class="top">
-    <div class="brand-wrap"><span class="brand">梅梅宇宙</span></div>
     <div class="ctrl"><button id="theme" type="button">☾ 夜间</button></div>
   </header>
 
@@ -165,6 +168,7 @@
     <strong>这里是梅梅的游园会。</strong>
     <span>我把活过、想过、做过，以及还在长出来的东西放在这里。</span>
     <span>点开画面里的词，随便逛逛。</span>
+    <span class="tour-order">没头绪的话，这样逛：先了解我 → 和梅梅聊天 → 人生 Wiki / 问题沙龙 → Life OS</span>
   </div>
 
   <div class="sky" id="sky">
@@ -240,7 +244,7 @@
     intro:{t:'先了解我', embed:true, b:'<iframe class="site-frame" src="https://personal-homepage-website-henna.vercel.app/" title="梅梅的个人主页" loading="eager"></iframe>'},
     wiki:{t:'人生 Wiki', b:'<div class="kicker">PUBLIC WIKI · 分类结构</div><p class="lead">我真的活过的证据，按这些类目长在一起。这是脱敏后的公开投影，完整版只留在私人 Wiki 里。</p><div class="preview trail"><div class="trail-row"><span class="trail-key">编年史</span><span>按年份铺开的时间线</span></div><div class="trail-row"><span class="trail-key">场域</span><span>待过的地方与它们的气味</span></div><div class="trail-row"><span class="trail-key">作品</span><span>写的、拍的、造的</span></div><div class="trail-row"><span class="trail-key">命题</span><span>反复回来的那几个问题</span></div></div><a class="go" href="wiki/" target="_blank" rel="noopener">进入人生 Wiki ↗</a>'},
     salon:{t:'问题沙龙', b:'<div class="kicker">会客厅 · QUESTION SALON</div><p class="lead">带着一个真问题，邀请有鲜明方法论的人一起学习、判断或创造。</p><div class="preview"><div class="preview-meta">下一张桌</div><div class="preview-title">开一张 Life OS 产品桌。请产品、技术、设计、营销领域里方法论差异鲜明的人来，用我目前的真实系统和材料过堂。</div></div><div class="tags"><span class="tag">自由之桌</span><span class="tag">钱之桌</span><span class="tag">不确定性之桌</span></div><a class="go" href="salon.html" target="_blank" rel="noopener">进入问题沙龙 ↗</a>'},
-    twin:{t:'和梅梅聊天', b:'<div class="kicker">和梅梅聊天 · 数字分身</div><p class="lead">我是数字梅梅，先来聊两句，感受一下合不合拍。</p><div class="chatlog" id="twinlog"><div class="bubble">嗨，我是数字梅梅。你可以直接问，也可以从下面挑一句。</div></div><div class="chat-prompts" aria-label="示例问题"><button class="prompt-chip" type="button" data-prompt="Life OS 对梅梅来说是什么？">什么是 Life OS？</button><button class="prompt-chip" type="button" data-prompt="梅梅怎么看不上班和自由？">聊聊不上班</button><button class="prompt-chip" type="button" data-prompt="我适合找真人梅梅聊什么？">我适合找她聊什么？</button></div><form class="chatbar" id="twinform"><input id="twinput" autocomplete="off" placeholder="说点什么…"><button type="submit">发</button></form>'},
+    twin:{t:'和梅梅聊天', b:'<div class="kicker">和梅梅聊天 · 数字分身</div><p class="lead">我是数字梅梅，先来聊两句，感受一下合不合拍。</p><p class="note">它跑在免费模型上，回答可能要等几秒，别急。</p><div class="chatlog" id="twinlog"><div class="bubble">嗨，我是数字梅梅。你可以直接问，也可以从下面挑一句。</div></div><div class="chat-prompts" aria-label="示例问题"><button class="prompt-chip" type="button" data-prompt="Life OS 对梅梅来说是什么？">什么是 Life OS？</button><button class="prompt-chip" type="button" data-prompt="梅梅怎么看不上班和自由？">聊聊不上班</button><button class="prompt-chip" type="button" data-prompt="我适合找真人梅梅聊什么？">我适合找她聊什么？</button></div><form class="chatbar" id="twinform"><input id="twinput" autocomplete="off" placeholder="说点什么…"><button type="submit">发</button></form>'},
     life:{t:'Life OS', b:'<div class="kicker">GREENHOUSE / TOOL SHED</div><p class="lead">这里不放“我是谁”的结论。放的是我怎么把这一切做出来。</p><div class="preview trail"><div class="trail-row"><span class="trail-key">底座</span><span>人生 Wiki、原话语料、证据页与冷库</span></div><div class="trail-row"><span class="trail-key">运转</span><span>数字分身、会客厅、灵感 Inbox、写作流水线</span></div><div class="trail-row"><span class="trail-key">方向</span><span>先服务于我，再成为作品，再成为对外产品</span></div></div><a class="go" href="talk.html" target="_blank" rel="noopener">打开 Life OS 演示 ↗</a>'},
     soon:{t:'下一颗星', b:'<div class="kicker">NEXT ORBIT</div><p class="lead">它还在长出来。</p><div class="preview trail"><div class="trail-row"><span class="trail-key">展陈</span><span>公开 Wiki 与人生地图</span></div><div class="trail-row"><span class="trail-key">互动</span><span>Builds 与连接入口</span></div></div>'},
     locked:{t:'桥的另一边', b:'<div class="kicker">THE BRIDGE IS SLEEPING</div><p class="lead">先去园子里走走吧。点亮先了解我、人生 Wiki、问题沙龙、和梅梅聊天和 Life OS，桥的另一边才会醒来。</p>'}

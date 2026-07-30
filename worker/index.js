@@ -126,7 +126,9 @@ function looksLikeLeakedReasoning(text) {
   // 第三人称谈论对方("ta"),同样是在分析对方而不是在对话
   if (/\bta(为什么|怎么|是不是|可能|现在|之前|对.{0,6}(有点|觉得|表达))/i.test(text)) return true;
   // 中文的"元语言"泄露:模型在讲自己怎么检索/怎么分析/在遵守什么规则,而不是直接回答。
-  if (/检索到的(材料|片段|内容)|第[一二三四五1-9]个片段|根据(检索|以上|上面的|规则|提供的|之前的对话)|这个问题需要|语料(包|库)|我需要(严格)?(基于|遵守|按照)|查看(提供的|上面)|(以上|上述)(材料|语料|内容)显示|^嗯[，,]/.test(text)) return true;
+  // 注意:"^嗯[，,]"曾经也在这条规则里,2026-08 复测发现它是个误伤大户——
+  // "嗯，我听着呢"这类开头是她说话的正常口气,不是泄露,已经删掉这条,别再加回来。
+  if (/检索到的(材料|片段|内容)|第[一二三四五1-9]个片段|根据(检索|以上|上面的|规则|提供的|之前的对话)|这个问题需要|语料(包|库)|我需要(严格)?(基于|遵守|按照)|查看(提供的|上面)|(以上|上述)(材料|语料|内容)显示/.test(text)) return true;
   return false;
 }
 
@@ -137,13 +139,21 @@ function looksLikeLeakedReasoning(text) {
 // 基本可以判定是编的——因为对外语料包本身完全不含具体文章/期数标题,任何真实标题只可能来自检索原文。
 function looksLikeFabricatedSource(text, systemContent) {
   if (!text) return false;
-  const SOURCE_CUE = /(一篇|这篇|那篇|专门讲|叫做|标题是|题目是|公众号里|博客里|播客里|第[一二三四五六七八九十\d]+期|哪篇文章|关于)/;
+  // 强信号:这些措辞几乎只出现在"引用某个具体作品"的语境里,配任何引号片段都算数。
+  const STRONG_CUE = /(一篇|这篇|那篇|专门讲|叫做|标题是|题目是|公众号里|博客里|播客里|第[一二三四五六七八九十\d]+期|哪篇文章)/;
+  // 弱信号:"关于「X」"在中文里太常见了(关于「烦恼」这件事),不能一律当成编标题,
+  // 否则会把正常回复误判成幻觉、白白掉进兜底文案。只有引号里长得像一个完整标题
+  // (≥8 字的句子感短语)时才追究,关键词式的短引用放过。
+  const WEAK_CUE = /关于$|关于.{0,4}$/;
   const quotes = text.match(/[《「][^》」]{2,30}[》」]/g) || [];
   for (const q of quotes) {
     const idx = text.indexOf(q);
-    const context = text.slice(Math.max(0, idx - 15), idx + q.length + 6);
+    const before = text.slice(Math.max(0, idx - 15), idx);
+    const context = before + text.slice(idx, idx + q.length + 6);
     const inner = q.slice(1, -1);
-    if (SOURCE_CUE.test(context) && !systemContent.includes(inner)) return true;
+    if (systemContent.includes(inner)) continue; // 语料/检索原文里确有此话,不是编的
+    if (STRONG_CUE.test(context)) return true;
+    if (WEAK_CUE.test(before) && inner.length >= 8) return true;
   }
   return false;
 }

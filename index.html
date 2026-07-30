@@ -138,10 +138,8 @@
   .garden-intro strong{display:block;margin-bottom:.42rem;font-size:1.08rem;font-weight:400;letter-spacing:.14em}
   .garden-intro span{display:block;font-family:var(--sans);font-size:.72rem;line-height:1.8;letter-spacing:.05em}
   /* 建议游览顺序:常驻可见,和上面的欢迎语拉开一点距离 */
-  /* 顺序行比欢迎语长,单独放宽排成一行,不跟着 .garden-intro 的窄宽度折行 */
-  .garden-intro .tour-order{margin:.7rem auto 0;padding-top:.55rem;font-size:.62rem;letter-spacing:.04em;opacity:.82;
-    border-top:1px solid rgba(80,110,80,.18);display:block;width:max-content;max-width:76vw;white-space:nowrap}
-  @media (max-width:900px){.garden-intro .tour-order{white-space:normal;width:auto;max-width:none}}
+  /* 顺序行是欢迎语的一部分,不额外撑宽——撑宽会让文字伸到「人生 Wiki」那颗星那里,
+     跟兄弟 span 一样按 .garden-intro 的宽度自然换行最安全 */
   .mmu[data-theme="night"] .garden-intro{color:rgba(225,238,215,.82);text-shadow:0 1px 8px rgba(0,0,0,.9),0 0 20px rgba(164,205,139,.35)}
 
   /* 会走的小梅梅：独立表现层，脚下坐标跟着画卷地点移动 */
@@ -231,7 +229,8 @@
     .s4{top:38%;left:75%}.s5{top:69%;left:30%}.s6{top:76%;left:72%}.s7{top:60%;left:55%}
     .s7 .label{font-size:.92rem;letter-spacing:.18em}
     .hint{display:none}
-    .garden-intro{top:14%;left:50%;width:72vw}.garden-intro strong{font-size:.9rem}.garden-intro span{font-size:.64rem;line-height:1.6}
+    /* 顺序那句比较长,这个宽度的窗口里挪高一点、留窄一点,免得压到 s1「人生 Wiki」 */
+    .garden-intro{top:9%;left:50%;width:64vw}.garden-intro strong{font-size:.9rem}.garden-intro span{font-size:.64rem;line-height:1.6}
     .walker{display:none}
     .foot{bottom:.9rem;font-size:.68rem;letter-spacing:.08em}
   }
@@ -250,10 +249,9 @@
   </header>
 
   <div class="garden-intro" aria-label="游园介绍">
-    <strong>这里是梅梅的游园会。</strong>
-    <span>我把活过、想过、做过，以及还在长出来的东西放在这里。</span>
-    <span>点开画面里的词，随便逛逛。</span>
-    <span class="tour-order">没头绪的话，这样逛：先了解我 → 和梅梅聊天 → 人生 Wiki / 问题沙龙 → Life OS</span>
+    <strong>欢迎来到梅梅游园会。</strong>
+    <span>我把活过、想过、做过，以及还有长出来的东西都放在这里。</span>
+    <span class="tour-order">欢迎随便逛逛，没头绪的话，可以这样逛：先了解我 → 和梅梅聊天 → 人生 Wiki / 问题沙龙 → Life OS</span>
   </div>
 
   <div class="sky" id="sky">

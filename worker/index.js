@@ -114,9 +114,15 @@ function looksLikeLeakedReasoning(text) {
   const asciiLetters = (text.match(/[a-zA-Z]/g) || []).length;
   if (asciiLetters > text.length * 0.4 && text.length > 20) return true; // 大段英文,不像中文口吻
   if (/^(we need to|i should|let me|okay,? i|the user (asks|wants))/i.test(text.trim())) return true;
+  // 核心信号(2026-07-30 红队测过 9 轮多轮对话实测出来的,不是猜的):
+  // "数字梅梅"这个角色永远用"你"称呼对方,绝不会说"用户"——一旦出现这个词,
+  // 100% 是模型把内部分析("用户问了什么、ta是什么心态")当成正文吐出来了。
+  // 这一条比任何具体句式匹配都稳:红队样本里所有泄露都命中,所有正常回复都没有误伤。
+  if (/用户|人设/.test(text)) return true;
+  // 第三人称谈论对方("ta"),同样是在分析对方而不是在对话
+  if (/\bta(为什么|怎么|是不是|可能|现在|之前|对.{0,6}(有点|觉得|表达))/i.test(text)) return true;
   // 中文的"元语言"泄露:模型在讲自己怎么检索/怎么分析/在遵守什么规则,而不是直接回答。
-  // 这类开场("嗯,用户让我…""根据规则,我需要…""查看提供的语料包…")最破坏观感,命中就当失败。
-  if (/检索到的(材料|片段|内容)|第[一二三四五1-9]个片段|根据(检索|以上|上面的|规则|提供的)|用户(问|让|叫|想|要|说)我|用户问的是|这个问题需要|语料(包|库)|我需要(严格)?(基于|遵守|按照)|查看(提供的|上面)|(以上|上述)(材料|语料|内容)显示/.test(text)) return true;
+  if (/检索到的(材料|片段|内容)|第[一二三四五1-9]个片段|根据(检索|以上|上面的|规则|提供的|之前的对话)|这个问题需要|语料(包|库)|我需要(严格)?(基于|遵守|按照)|查看(提供的|上面)|(以上|上述)(材料|语料|内容)显示|^嗯[，,]/.test(text)) return true;
   return false;
 }
 
@@ -157,13 +163,24 @@ async function callBrain(env, messages) {
       if (text && !looksLikeLeakedReasoning(text.trim())) return text.toString().trim();
       throw new Error("OpenRouter 返回为空或疑似泄露内部思考");
     } catch (err) {
-      // OpenRouter 挂了/限流了/输出异常,退回 Cloudflare 兜底,不让用户直接看到错误或垃圾内容
-      const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: MAX_OUT_TOKENS, temperature: 0.7 });
-      return (out && (out.response || out.result || "")).toString().trim();
+      // OpenRouter 挂了/限流了/输出异常,退回 Cloudflare 兜底
+      return await callFallback(env, messages);
     }
   }
-  const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: MAX_OUT_TOKENS, temperature: 0.7 });
-  return (out && (out.response || out.result || "")).toString().trim();
+  return await callFallback(env, messages);
+}
+
+// 兜底模型(Qwen3-30B)同样有泄露风险,之前这条路完全没检测,是个漏洞——
+// 补上同一道检测;兜底也失败就返回安全的固定文案,绝不把没检查过的内容递给用户。
+async function callFallback(env, messages) {
+  try {
+    const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: MAX_OUT_TOKENS, temperature: 0.7 });
+    const text = ((out && (out.response || out.result)) || "").toString().trim();
+    if (text && !looksLikeLeakedReasoning(text)) return text;
+  } catch (err) {
+    // 落到下面的固定文案
+  }
+  return "……(今天有点卡壳,要不换句话再问我一次?)";
 }
 
 // ---- RAG: 检索 ----

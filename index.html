@@ -399,14 +399,20 @@
       var waitTimer=setTimeout(function(){
         typing.innerHTML='还在想，稍等一下<span class="dots"><i></i><i></i><i></i></span>';
       },6000);
-      fetch(TWIN_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})})
+      // 后端最坏情况约 19 秒(检索+大脑+兜底三层超时叠加),这里给够余量再放弃,别让用户干等到浏览器自己断
+      var ac=new AbortController();
+      var abortTimer=setTimeout(function(){ ac.abort(); },25000);
+      fetch(TWIN_API,{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:history})})
         .then(function(r){return r.json();})
         .then(function(d){
-          clearTimeout(waitTimer); typing.remove();
+          clearTimeout(waitTimer); clearTimeout(abortTimer); typing.remove();
           var reply=d.reply||d.error||'……(卡了一下,再说一次?)';
           add('assistant',reply); history.push({role:'assistant',content:reply});
         })
-        .catch(function(){ clearTimeout(waitTimer); typing.remove(); add('assistant','(我这边断线了,待会儿再聊?)'); })
+        .catch(function(err){
+          clearTimeout(waitTimer); clearTimeout(abortTimer); typing.remove();
+          add('assistant', (err && err.name==='AbortError') ? '这次它掉线了,再试一次?' : '(我这边断线了,待会儿再聊?)');
+        })
         .finally(function(){ btn.disabled=false; });
     });
   }

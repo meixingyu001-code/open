@@ -25,6 +25,10 @@ const MAX_OUT_TOKENS = 500;
 // 免费模型排队超过这个时长就放弃,改走兜底。注意最坏情况 = 这个超时 + 兜底生成时间,
 // 所以别设太大;设太小又会把本来能出好结果的请求提前掐掉。7 秒是实测的折中。
 const OPENROUTER_TIMEOUT_MS = 7000;
+// 兜底模型(callFallback)之前完全没有超时保护——这是红队实测偶发单次请求超 30 秒的根因。
+// 现在补上上限:超过就直接返回固定安全文案,不再无限等 Workers AI 排队。
+// 最坏情况时延 ≈ RETRIEVE_TIMEOUT_MS + OPENROUTER_TIMEOUT_MS + FALLBACK_TIMEOUT_MS ≈ 4+7+8 = 19s。
+const FALLBACK_TIMEOUT_MS = 8000;
 const RETRIEVE_TIMEOUT_MS = 4000;    // 检索超时就当没检索到,不拖住回答
 // 整条消息就是一句问候时跳过检索(见下方调用处)
 const SMALLTALK = /^(你好|您好|hi|hello|hey|哈喽|嗨|在吗|在么|早|早上好|上午好|下午好|晚上好|测试|test)[\s!！。.,，~、?？]*$/i;
@@ -174,11 +178,14 @@ async function callBrain(env, messages) {
 // 补上同一道检测;兜底也失败就返回安全的固定文案,绝不把没检查过的内容递给用户。
 async function callFallback(env, messages) {
   try {
-    const out = await env.AI.run(FALLBACK_MODEL, { messages, max_tokens: MAX_OUT_TOKENS, temperature: 0.7 });
+    const out = await Promise.race([
+      env.AI.run(FALLBACK_MODEL, { messages, max_tokens: MAX_OUT_TOKENS, temperature: 0.7 }),
+      new Promise((_, rej) => setTimeout(() => rej(new Error("fallback timeout")), FALLBACK_TIMEOUT_MS)),
+    ]);
     const text = ((out && (out.response || out.result)) || "").toString().trim();
     if (text && !looksLikeLeakedReasoning(text)) return text;
   } catch (err) {
-    // 落到下面的固定文案
+    // 超时或调用失败,落到下面的固定文案
   }
   return "……(今天有点卡壳,要不换句话再问我一次?)";
 }
@@ -259,6 +266,12 @@ function scriptedReply(history) {
   const privateQuestion = /(最近.*(难过|焦虑|害怕|情绪|感情|关系)|具体.*(难过|焦虑|害怕|情绪|关系)|私下|没公开|真实想法|感情状态)/.test(last);
   if (privateQuestion) {
     return "这个属于要跟真人梅梅聊的部分啦。我这个分身只聊她公开表达过的东西，不替她讲私密情绪、具体关系或未公开经历。";
+  }
+
+  // 财务数字和健康数字同级别:红线不因为语料里提过一嘴就自动失效,拦在对话层,不让它进 RAG 检索。
+  const personalFinanceQuestion = /(她|梅梅).{0,10}(挣|赚|收入|工资|存款|年薪|月薪|身价|资产|多少钱)|挣多少钱|赚多少钱|收入多少|工资多少|存款多少/.test(last);
+  if (personalFinanceQuestion) {
+    return "她具体挣多少、存款多少，这个我不聊——跟健康、家人一样，属于不出门的数字。想聊点别的吗？";
   }
 
   const unsolicitedAdviceQuestion = /(没问.*建议|给建议|被建议|太敏感|需要被修正|居高临下)/.test(last);
